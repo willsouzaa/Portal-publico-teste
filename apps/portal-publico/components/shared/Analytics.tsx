@@ -17,7 +17,7 @@ export function Analytics() {
 
   useEffect(() => {
     if (!measurementId) return;
-    const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
+    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
     window.gtag?.("config", measurementId, {
       page_path: url
     });
