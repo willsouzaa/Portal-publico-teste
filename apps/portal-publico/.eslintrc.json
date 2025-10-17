@@ -1,34 +1,9 @@
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2023,
-    "sourceType": "module",
-    "project": ["./tsconfig.json"],
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  },
-  "plugins": ["@typescript-eslint", "react-hooks"],
   "extends": [
     "next/core-web-vitals",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended"
+    "next/typescript"
   ],
   "rules": {
-  "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
-    // change hooks rule to warn so build doesn't fail (still recommend fixing the code)
-    "react-hooks/rules-of-hooks": "warn",
-    "react-hooks/exhaustive-deps": "warn",
-    "@next/next/no-img-element": "warn",
-    "@next/next/no-html-link-for-pages": "warn",
-    // avoid build failure for empty blocks in try/catch placeholders
-    "no-empty": "warn",
-    // silent anonymous default export rule (can be enabled later if plugin added)
-    "import/no-anonymous-default-export": "off",
-    "no-console": "off"
+    "react-refresh/only-export-components": "off"
   }
 }
-
