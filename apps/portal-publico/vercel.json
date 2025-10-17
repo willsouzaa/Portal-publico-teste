@@ -1,7 +1,8 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "rm -rf .next && npm run build",
+  "installCommand": "npm ci",
+  "buildCommand": "npx next build",
   "rewrites": [
     {
       "source": "/apartamentos-venda-:citySlug-:stateSlug/:slugId",
