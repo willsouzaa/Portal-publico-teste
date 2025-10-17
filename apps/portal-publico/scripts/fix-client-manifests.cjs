@@ -2,35 +2,39 @@ const fs = require('fs');
 const path = require('path');
 
 const appDir = path.resolve(__dirname, '..');
-const serverAppDir = path.join(appDir, '.next', 'server', 'app');
-const manifestName = 'page_client-reference-manifest.js';
+const nextAppDir = path.join(appDir, '.next', 'server', 'app');
 
-function tryCopy(from, to) {
-  if (fs.existsSync(from)) {
-    try {
-      fs.mkdirSync(path.dirname(to), { recursive: true });
-      fs.copyFileSync(from, to);
-      console.log(`Copied ${from} -> ${to}`);
-      return true;
-    } catch (err) {
-      console.error('Failed to copy manifest:', err.message);
-      return false;
-    }
+function log(...args) {
+  console.log('[fix-client-manifests]', ...args);
+}
+
+try {
+  log('cwd', process.cwd());
+  log('nextAppDir', nextAppDir);
+
+  if (!fs.existsSync(nextAppDir)) {
+    log('No .next/server/app directory found, nothing to do.');
+    process.exit(0);
   }
-  return false;
+
+  const rootManifest = path.join(nextAppDir, 'page_client-reference-manifest.js');
+  const siteDir = path.join(nextAppDir, '(site)');
+  const siteManifest = path.join(siteDir, 'page_client-reference-manifest.js');
+
+  if (!fs.existsSync(rootManifest)) {
+    log('Root manifest not found at', rootManifest);
+    process.exit(0);
+  }
+
+  if (!fs.existsSync(siteDir)) {
+    log('(site) directory does not exist, creating it');
+    fs.mkdirSync(siteDir, { recursive: true });
+  }
+
+  fs.copyFileSync(rootManifest, siteManifest);
+  log('Copied', rootManifest, '->', siteManifest);
+  process.exit(0);
+} catch (err) {
+  console.error('[fix-client-manifests] error', err);
+  process.exit(1);
 }
-
-const rootManifest = path.join(serverAppDir, manifestName);
-const siteManifest = path.join(serverAppDir, '(site)', manifestName);
-
-if (!fs.existsSync(siteManifest)) {
-  if (tryCopy(rootManifest, siteManifest)) process.exit(0);
-  // try other possible locations (e.g. encoded folder names)
-  const alt = path.join(serverAppDir, '%28site%29', manifestName);
-  if (tryCopy(rootManifest, alt)) process.exit(0);
-  console.warn('No manifest copied; file still missing:', siteManifest);
-} else {
-  console.log('Site manifest already exists:', siteManifest);
-}
-
-process.exit(0);
