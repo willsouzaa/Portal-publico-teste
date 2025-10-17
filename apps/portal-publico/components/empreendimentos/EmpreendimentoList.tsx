@@ -125,6 +125,19 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
     lancamentos: empreendimentos.filter((item) => item.status === "lancamento").length
   };
 
+  // compute the 'ver mais' link href outside of JSX to avoid calling hooks conditionally
+  const moreLinkHref = (() => {
+    const params = new URLSearchParams();
+    if (filters.search) params.set("q", filters.search);
+    if (filters.cidade) params.set("cidade", filters.cidade);
+    if (filters.tipo) params.set("tipo", filters.tipo);
+    if (filters.status) params.set("status", filters.status);
+    if (filters.precoMin) params.set("precoMin", String(filters.precoMin));
+    if (filters.precoMax) params.set("precoMax", String(filters.precoMax));
+    const s = params.toString();
+    return s ? `/empreendimentos?${s}` : "/empreendimentos";
+  })();
+
   return (
     <div className="space-y-10">
       <div className="grid gap-4 md:grid-cols-3">
@@ -192,17 +205,7 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
           {filteredEmpreendimentos.length > initialLimit && !showAll && (
             <div className="mt-6 flex justify-center">
               <Link
-                href={useMemo(() => {
-                  const params = new URLSearchParams();
-                  if (filters.search) params.set("q", filters.search);
-                  if (filters.cidade) params.set("cidade", filters.cidade);
-                  if (filters.tipo) params.set("tipo", filters.tipo);
-                  if (filters.status) params.set("status", filters.status);
-                  if (filters.precoMin) params.set("precoMin", String(filters.precoMin));
-                  if (filters.precoMax) params.set("precoMax", String(filters.precoMax));
-                  const s = params.toString();
-                  return s ? `/empreendimentos?${s}` : "/empreendimentos";
-                }, [filters])}
+                href={moreLinkHref}
                 className="inline-flex items-center rounded-xl border border-primary/20 bg-primary/10 px-6 py-3 text-sm font-semibold text-primary hover:bg-primary/20"
               >
                 Ver mais empreendimentos
