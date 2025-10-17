@@ -1,0 +1,41 @@
+{
+  "name": "San Remo Portal Público",
+  "short_name": "San Remo",
+  "description": "Explore empreendimentos imobiliários de alto padrão",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#001D38",
+  "theme_color": "#001D38",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/branding/san-remo-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/branding/san-remo-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["business", "lifestyle"],
+  "lang": "pt-BR",
+  "dir": "ltr"
+}
