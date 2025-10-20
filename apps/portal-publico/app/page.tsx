@@ -656,57 +656,81 @@ export default async function HomePage({
     <LeadModalClientWrapper />
 
       <section className="container py-16 lg:py-24">
-        <div className="space-y-8">
+        <div className="space-y-12">
           <h2 className="text-2xl font-bold text-primary-900 text-center mb-8">Imóveis por bairros e cidades</h2>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-            {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
-              const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro);
-              const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
-              const visible = empreendimentosCidade.slice(0, 10);
-              const remaining = Math.max(0, empreendimentosCidade.length - visible.length);
-              const [cityOnly] = cidadeTag.split(",").map(s => s.trim());
-              return (
-                <Card key={cidadeTag} className="rounded-3xl border border-slate-200 bg-white shadow-lg p-10 flex flex-col min-h-[640px] w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-                  {primeiroEmpreendimento && (
-                    <div className="mb-8 rounded-md overflow-hidden aspect-[4/3] bg-slate-100 flex items-center justify-center" style={{ maxHeight: '160px', minHeight: '160px', height: '160px' }}>
-                      <Image
-                        src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
-                        alt={primeiroEmpreendimento.nome || 'Imagem do imóvel'}
-                        width={160}
-                        height={120}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  )}
-                  <CardHeader className="p-0 mb-3">
-                    <CardTitle className="text-base font-semibold text-primary-900">{cidadeTag}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <ul className="list-disc ml-4 text-sm text-slate-700 space-y-1">
-                      {visible.map((e) => (
-                        <li key={e.id}>
-                          <Link
-                            href={`/empreendimentos?cidade=${encodeURIComponent(e.cidade)}&bairro=${encodeURIComponent(e.bairro ?? '')}`}
-                            className="text-primary font-semibold hover:underline block"
-                          >
-                            Apartamentos no bairro {e.bairro}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                    {remaining > 0 && (
+          
+          {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
+            const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro);
+            const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
+            const [cityOnly] = cidadeTag.split(",").map(s => s.trim());
+            
+            // Remove links duplicados baseado no bairro
+            const bairrosUnicos = Array.from(new Set(empreendimentosCidade.map(e => e.bairro).filter((bairro): bairro is string => Boolean(bairro))));
+            
+            // Divide os bairros em 3 colunas
+            const itemsPorColuna = Math.ceil(bairrosUnicos.length / 3);
+            const coluna1 = bairrosUnicos.slice(0, itemsPorColuna);
+            const coluna2 = bairrosUnicos.slice(itemsPorColuna, itemsPorColuna * 2);
+            const coluna3 = bairrosUnicos.slice(itemsPorColuna * 2);
+            
+            return (
+              <div key={cidadeTag} className="space-y-6">
+                {/* Imagem da cidade */}
+                {primeiroEmpreendimento && (
+                  <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg">
+                    <Image
+                      src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
+                      alt={`Imóveis em ${cidadeTag}`}
+                      width={1200}
+                      height={400}
+                      className="object-cover w-full h-full"
+                      priority={false}
+                    />
+                  </div>
+                )}
+                
+                {/* Título da cidade */}
+                <h3 className="text-xl font-semibold text-primary-900">{cidadeTag}</h3>
+                
+                {/* Três colunas de links */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    {coluna1.map((bairro) => (
                       <Link
-                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}`}
-                        className="mt-3 inline-block text-sm text-primary font-semibold hover:underline"
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline block text-sm"
                       >
-                        +{remaining} mais
+                        Apartamentos no bairro {bairro}
                       </Link>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {coluna2.map((bairro) => (
+                      <Link
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline block text-sm"
+                      >
+                        Apartamentos no bairro {bairro}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {coluna3.map((bairro) => (
+                      <Link
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline block text-sm"
+                      >
+                        Apartamentos no bairro {bairro}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </>
