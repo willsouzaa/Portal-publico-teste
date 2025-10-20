@@ -583,14 +583,14 @@ export default async function HomePage({
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
             <div className="space-y-6">
               <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Consultoria personalizada</span>
-              <h2 className="text-3xl font-semibold">Vamos desenhar seu próximo investimento?</h2>
+              <h2 className="text-3xl font-semibold text-primary-900">Vamos desenhar seu próximo investimento?</h2>
               <p className="max-w-xl text-base text-white/80">
                 Briefing estratégico, análise financeira, visitas acompanhadas e suporte jurídico. Nosso time conduz todo o processo para que você realize um negócio seguro e personalizado.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button
                   asChild
-                  className="rounded-xl bg-secondary px-6 py-3 text-sm font-semibold text-primary-900 shadow-sm transition hover:bg-secondary/90"
+                  className="rounded-xl border-primary/30 px-6 py-3 text-sm font-semibold text-primary-900 shadow-sm transition hover:text-white hover:bg-primary/700"
                 >
                   <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">
                     Conversar pelo WhatsApp
@@ -598,8 +598,7 @@ export default async function HomePage({
                 </Button>
                 <Button
                   asChild
-                  variant="outline"
-                  className="rounded-xl border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  className="rounded-xl bg-transparent border-primary/30 px-6 py-3 text-sm font-semibold text-primary-900 hover:text-white hover:bg-primary/700 transition-colors duration-200"
                 >
                   <Link href="/contato">Agendar conversa</Link>
                 </Button>
@@ -659,39 +658,50 @@ export default async function HomePage({
       <section className="container py-16 lg:py-24">
         <div className="space-y-8">
           <h2 className="text-2xl font-bold text-primary-900 text-center mb-8">Imóveis por bairros e cidades</h2>
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
-              const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag);
+              const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro);
               const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
+              const visible = empreendimentosCidade.slice(0, 10);
+              const remaining = Math.max(0, empreendimentosCidade.length - visible.length);
+              const [cityOnly] = cidadeTag.split(",").map(s => s.trim());
               return (
-                <Card key={cidadeTag} className="rounded-xl border border-slate-200 bg-white shadow-lg p-4 flex flex-col min-h-[240px] max-w-xs mx-auto">
+                <Card key={cidadeTag} className="rounded-3xl border border-slate-200 bg-white shadow-lg p-10 flex flex-col min-h-[640px] w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
                   {primeiroEmpreendimento && (
-                    <div className="mb-4 rounded-md overflow-hidden aspect-[4/3] bg-slate-100 flex items-center justify-center" style={{ maxHeight: '72px', minHeight: '72px', height: '72px' }}>
+                    <div className="mb-8 rounded-md overflow-hidden aspect-[4/3] bg-slate-100 flex items-center justify-center" style={{ maxHeight: '160px', minHeight: '160px', height: '160px' }}>
                       <Image
                         src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
                         alt={primeiroEmpreendimento.nome || 'Imagem do imóvel'}
-                        width={72}
-                        height={54}
+                        width={160}
+                        height={120}
                         className="object-cover w-full h-full"
                       />
                     </div>
                   )}
-                  <CardHeader className="p-0 mb-1">
-                    <CardTitle className="text-sm font-semibold text-primary-900">{cidadeTag}</CardTitle>
+                  <CardHeader className="p-0 mb-3">
+                    <CardTitle className="text-base font-semibold text-primary-900">{cidadeTag}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <ul className="list-disc ml-4 text-sm text-slate-700">
-                      {empreendimentosCidade.filter(e => e.bairro).map((e) => (
+                    <ul className="list-disc ml-4 text-sm text-slate-700 space-y-1">
+                      {visible.map((e) => (
                         <li key={e.id}>
                           <Link
                             href={`/empreendimentos?cidade=${encodeURIComponent(e.cidade)}&bairro=${encodeURIComponent(e.bairro ?? '')}`}
-                            className="text-primary font-semibold hover:underline"
+                            className="text-primary font-semibold hover:underline block"
                           >
                             Apartamentos no bairro {e.bairro}
                           </Link>
                         </li>
                       ))}
                     </ul>
+                    {remaining > 0 && (
+                      <Link
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}`}
+                        className="mt-3 inline-block text-sm text-primary font-semibold hover:underline"
+                      >
+                        +{remaining} mais
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               );
