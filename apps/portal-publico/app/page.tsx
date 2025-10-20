@@ -463,7 +463,7 @@ export default async function HomePage({
         </div>
         {/* Texto alinhado à esquerda */}
         <div className="relative flex justify-start items-center w-full min-h-[220px] py-6 px-4">
-          <div className="space-y-2 bg-black/40 rounded-xl p-4 shadow-xl backdrop-blur-sm max-w-md w-full text-left" style={{ position: 'relative', top: '180px', zIndex: 10 }}>
+          <div className="space-y-2 bg-black/40 rounded-xl p-4 shadow-xl backdrop-blur-sm max-w-md w-full text-left z-[9999] relative" style={{ top: '40px', zIndex: 50 }}>
             <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-secondary">
               Personal Shopper Imobiliário
             </span>
@@ -473,17 +473,18 @@ export default async function HomePage({
             <p className="max-w-md text-sm text-white/80">
               Descubra lançamentos, imóveis em obras e empreendimentos prontos para morar com a curadoria de um time que entende o luxo imobiliário catarinense.
             </p>
-          </div>
-          {/* Logo animada, só exibe em telas grandes (lg+) */}
-          <div className="hidden lg:block absolute" style={{ bottom: '-40px', right: '16rem' }}>
-            <img
-              src="/branding/san-remo-logo.png"
-              alt="San Remo Logo"
-              width={220}
-              height={220}
-              style={{ opacity: 0, transform: 'translateY(40px)', transition: 'opacity 1s 0.5s, transform 1s 0.5s', animation: 'fadeInUpLogo 1s 0.5s forwards' }}
-              className="opacity-90 object-contain drop-shadow-xl bg-black/40 rounded-xl p-2 shadow-xl backdrop-blur-sm"
-            />
+
+            {/* Logo animada - agora dentro do card para garantir overlay em telas grandes (lg+) */}
+            <div className="hidden lg:block absolute -top-12 -right-28">
+              <img
+                src="/branding/san-remo-logo.png"
+                alt="San Remo Logo"
+                width={220}
+                height={220}
+                style={{ opacity: 0, transform: 'translateY(40px)', transition: 'opacity 1s 0.5s, transform 1s 0.5s', animation: 'fadeInUpLogo 1s 0.5s forwards' }}
+                className="opacity-90 object-contain drop-shadow-xl bg-black/40 rounded-xl p-2 shadow-xl backdrop-blur-sm"
+              />
+            </div>
             <style>{`
               @keyframes fadeInUpLogo {
                 to {
