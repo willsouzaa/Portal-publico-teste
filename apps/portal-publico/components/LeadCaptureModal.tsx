@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -18,15 +19,22 @@ const HIDE_AFTER_SUBMIT = "lead_modal_submitted";
 
 export function LeadCaptureModal() {
   const [open, setOpen] = useState(false);
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
   const [form, setForm] = useState<FormState>({ nome: "", contato: "", tipo: "whatsapp" });
   const shownRef = useRef(false);
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submittedOk, setSubmittedOk] = useState(false);
   const [debug, setDebug] = useState({ lastShown: null as string | null, submitted: null as string | null });
+  const svgWrapperRef = useRef<HTMLDivElement | null>(null);
 
   // Não mostrar se já submeteu
   useEffect(() => {
     console.log("[LeadModal] mounted");
     setMounted(true);
+    try {
+      // keep mounted flag; dev badge removed in compact mode
+    } catch {}
     // populate debug from localStorage
     try {
       setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) });
@@ -67,25 +75,11 @@ export function LeadCaptureModal() {
       // ignore
     }
 
-    // Delegated click handler: elements with `data-open-lead` will open the modal.
-    const onDocClick = (e: MouseEvent) => {
-      try {
-        const target = e.target as HTMLElement | null;
-        if (!target) return;
-        const el = target.closest('[data-open-lead]') as HTMLElement | null;
-        if (el) {
-          // Prevent navigation/submission when this attribute is used to open the modal
-          try { e.preventDefault(); } catch {}
-          try { e.stopPropagation(); } catch {}
-          try { (window as any).__openLeadModal?.(); } catch {}
-        }
-      } catch (err) {
-        // ignore
-      }
-    };
-    document.addEventListener('click', onDocClick, { capture: true });
+    // Delegated click handler removed: debug/open buttons on the page no longer trigger modal.
 
-    if (localStorage.getItem(HIDE_AFTER_SUBMIT)) {
+    // In debug mode we may want to bypass suppression for QA/testing
+    const debugBypass = process.env.NEXT_PUBLIC_DEBUG_OPEN_MODAL === "1";
+    if (!debugBypass && localStorage.getItem(HIDE_AFTER_SUBMIT)) {
       console.log('[LeadModal] suppressed: already submitted (localStorage)');
       return;
     }
@@ -94,8 +88,11 @@ export function LeadCaptureModal() {
       const t = Number(last);
       // não mostrar se exibido nas últimas 24h
       if (!isNaN(t) && Date.now() - t < 1000 * 60 * 60 * 24) {
-        console.log('[LeadModal] suppressed: shown within 24h');
-        return;
+        if (!debugBypass) {
+          console.log('[LeadModal] suppressed: shown within 24h');
+          return;
+        }
+        console.log('[LeadModal] debug bypass: ignoring 24h suppression');
       }
     }
 
@@ -144,12 +141,13 @@ export function LeadCaptureModal() {
     };
     window.addEventListener("mousemove", onMouseMove);
 
+    // compact modal: no pointer parallax handlers
+
     return () => {
       clearTimeout(timer);
       clearTimeout(immediateTimer);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener('click', onDocClick, { capture: true } as any);
+  window.removeEventListener("scroll", onScroll);
+  window.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
@@ -160,6 +158,10 @@ export function LeadCaptureModal() {
     setOpen(true);
     // opcional: track event
     // console.log("Lead modal opened:", reason);
+    // focus first input after opening
+    setTimeout(() => {
+      try { firstInputRef.current?.focus(); } catch {}
+    }, 100);
   }
 
   function closeModal() {
@@ -168,6 +170,7 @@ export function LeadCaptureModal() {
 
   async function saveLead(payload: FormState) {
     try {
+      setLoading(true);
       const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
       const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       if (!url || !anon) throw new Error("Supabase public env missing");
@@ -191,7 +194,10 @@ export function LeadCaptureModal() {
       // Marcar para não mostrar de novo
       localStorage.setItem(HIDE_AFTER_SUBMIT, "1");
       try { setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) }); } catch {}
+      setSubmittedOk(true);
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       // Fail silently / log
       console.error("saveLead error:", err);
     }
@@ -211,89 +217,83 @@ export function LeadCaptureModal() {
       window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
     }
 
-    closeModal();
+    // keep modal open to show success state (saveLead sets submittedOk)
   };
 
   return (
     <Dialog open={open} onOpenChange={(v: boolean) => { if (!v) closeModal(); }}>
-      <DialogContent className="max-w-md rounded-3xl bg-white/95 backdrop-blur-lg shadow-2xl border border-slate-200 animate-fadeIn">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-primary-900">
-            Sua oportunidade em minutos
-          </DialogTitle>
-          <DialogDescription className="text-slate-600">
-            Mais de <strong>1.000 investidores</strong> satisfeitos com San Remo.
-            <br />Preencha rapidinho — te chamamos pelo WhatsApp em até 1 minuto.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-          <Input
-            required
-            placeholder="Seu nome"
-            value={form.nome}
-            onChange={(e) => setForm({ ...form, nome: e.target.value })}
-          />
-
-          <div className="flex gap-2">
-            <select
-              value={form.tipo}
-              onChange={(e) => setForm({ ...form, tipo: e.target.value as any })}
-              className="rounded-full border px-3 py-2 bg-white"
-            >
-              <option value="whatsapp">WhatsApp</option>
-              <option value="email">E‑mail</option>
-            </select>
-
-            <Input
-              required
-              placeholder={form.tipo === "whatsapp" ? "WhatsApp (ex: 5548...)" : "Email"}
-              value={form.contato}
-              onChange={(e) => setForm({ ...form, contato: e.target.value })}
-            />
+      <DialogContent className="w-full max-w-[640px] mx-auto max-h-[86vh] overflow-y-auto rounded-2xl bg-white/95 backdrop-blur-md shadow-lg border border-slate-200 p-6">
+        <motion.div initial={{ opacity: 0, y: 8, scale: 0.995 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.995 }} transition={{ type: 'spring', stiffness: 260, damping: 26 }} className="flex flex-col">
+          {/* Compact centered modal - logo above title, simplified layout */}
+          <div className="flex items-center gap-3 mb-4">
+            <img src="/branding/san-remo-logo.png" alt="San Remo" className="h-8 w-auto" />
+            <h2 className="text-2xl font-extrabold text-primary-900">Atendimento personalizado</h2>
+            <button onClick={closeModal} aria-label="Fechar" className="ml-auto text-slate-400 hover:text-slate-600">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full rounded-full bg-[#F54F0D] hover:bg-[#d7470c] text-white font-semibold py-3 transition"
-          >
-            Quero meu atendimento personalizado
-          </Button>
-        </form>
+          {submittedOk ? (
+            <motion.div initial={{ scale: 0.98, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }} className="mt-2 rounded-xl bg-emerald-50 border border-emerald-100 p-6 text-center flex flex-col items-center gap-4">
+              <div className="rounded-full bg-emerald-600 text-white w-16 h-16 flex items-center justify-center shadow">
+                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <h3 className="text-base font-semibold text-emerald-800">Recebemos sua mensagem</h3>
+              <p className="text-sm text-emerald-700 max-w-xs">Em breve nosso consultor entrará em contato pelo canal escolhido.</p>
+              <div className="mt-2">
+                <button onClick={closeModal} className="px-4 py-2 rounded-full bg-emerald-600 text-white font-semibold shadow hover:brightness-105 transition">Fechar</button>
+              </div>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-2 grid grid-cols-1 gap-3">
+              <Input
+                ref={firstInputRef as any}
+                required
+                placeholder="Seu nome"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                className="py-2 border-gray-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 rounded transition"
+              />
 
-        <p className="mt-3 text-xs text-center text-slate-500">
-          Garantimos sigilo. Contato apenas por consultores San Remo.
-        </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <select
+                  value={form.tipo}
+                  onChange={(e) => setForm({ ...form, tipo: e.target.value as any })}
+                  className="col-span-1 rounded border px-2 py-2 bg-white text-sm focus:ring-1 focus:ring-primary-500 transition"
+                >
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="email">E‑mail</option>
+                </select>
+
+                <Input
+                  required
+                  placeholder={form.tipo === "whatsapp" ? "WhatsApp (ex: 5548...)" : "Email"}
+                  value={form.contato}
+                  onChange={(e) => setForm({ ...form, contato: e.target.value })}
+                  className="sm:col-span-2 py-2 border-gray-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 rounded transition"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full rounded-full bg-gradient-to-r from-[#FF7A3D] to-[#F54F0D] hover:from-[#ff914a] hover:to-[#d7470c] text-white font-bold py-2 text-sm shadow transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                )}
+                <span>Quero meu atendimento personalizado</span>
+              </Button>
+
+              <div className="text-xs text-slate-500 text-center mt-1">Garantimos sigilo. Contato apenas por consultores San Remo.</div>
+            </form>
+          )}
+        </motion.div>
       </DialogContent>
-        {/* Debug overlay (visible in dev) */}
-        {mounted && (
-          <div className="fixed left-4 bottom-4 z-[9999] bg-white/95 border rounded-md p-2 text-xs shadow-lg">
-            <div className="font-medium">LeadModal debug</div>
-            <div>mounted: {String(mounted)}</div>
-            <div>open: {String(open)}</div>
-            <div>shownRef: {String(shownRef.current)}</div>
-            <div>lastShown: {debug.lastShown ?? "-"}</div>
-            <div>submitted: {debug.submitted ?? "-"}</div>
-            <div className="mt-1 flex gap-1">
-              <button
-                onClick={() => {
-                  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(HIDE_AFTER_SUBMIT); setDebug({ lastShown: null, submitted: null }); shownRef.current = false; setOpen(false); }
-                  catch {}
-                }}
-                className="px-2 py-1 bg-slate-100 rounded"
-              >
-                Clear LS
-              </button>
-              <button
-                // Use delegated open so behavior is centralized
-                data-open-lead
-                className="px-2 py-1 bg-slate-100 rounded"
-              >
-                Force Open
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Debug overlay removed per request */}
     </Dialog>
   );
 }
