@@ -180,11 +180,18 @@ export default async function EmpreendimentoPage({ params }: Params) {
       />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,#001d38_0%,#0f2f4e_55%,#e5a855_110%)]" aria-hidden="true" />
-        <div className="absolute inset-0 bg-black/25" aria-hidden="true" />
+      <section
+        className="relative overflow-hidden"
+        aria-label="Hero do empreendimento"
+        style={{
+          backgroundImage: `url(${(galleryImages[0] ?? empreendimento.imagem_capa ?? '')})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
         <div className="relative z-10">
-          <div className="container flex flex-col gap-8 py-14 text-white md:py-20">
+          <div className="container flex flex-col gap-8 py-12 text-white md:py-16 min-h-[280px]">
             <Link
               href="/"
               className="inline-flex items-center gap-2 self-start rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
@@ -195,7 +202,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
 
             <div className="grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-center">
               <div className="space-y-6">
-                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
                   <span className="rounded-full bg-white/10 px-4 py-1">
                     {empreendimento.cidade} · {empreendimento.estado}
                   </span>
@@ -213,7 +220,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
                   <h1 className="text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
                     {empreendimento.nome}
                   </h1>
-                  <p className="max-w-2xl text-base text-white/80">
+                  <p className="max-w-2xl text-base text-white/90">
                     {destaqueResumo}
                   </p>
                 </div>
@@ -271,24 +278,26 @@ export default async function EmpreendimentoPage({ params }: Params) {
         </div>
       </section>
 
+      {/* Large gallery */}
+      {galleryImages.length > 0 && (
+        <section className="bg-white">
+          <div className="container py-12">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {galleryImages.map((src, idx) => (
+                <div key={idx} className="rounded-lg overflow-hidden shadow-lg">
+                  <img src={src} alt={`${empreendimento.nome} - Imagem ${idx + 1}`} className="w-full h-64 object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Conteúdo principal */}
       <section className="bg-gradient-to-b from-white via-white to-slate-50">
         <div className="container space-y-14 py-14">
           <div className="grid gap-10 lg:grid-cols-[2fr,1fr]">
             <div className="space-y-10">
-              <Card className="overflow-hidden border border-[#0f2f4e]/10 shadow-lg">
-                <CardHeader className="border-b border-border/60 bg-slate-50/60">
-                  <CardTitle className="text-2xl font-semibold text-[#0f2f4e]">
-                    Galeria do empreendimento
-                  </CardTitle>
-                  <CardDescription className="text-slate-600">
-                    Visualize o empreendimento em diferentes perspectivas e ambientes.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <ImageGallery images={galleryImages} alt={empreendimento.nome} />
-                </CardContent>
-              </Card>
 
               {(empreendimento.descricao || empreendimento.destaque) && (
                 <Card className="border border-[#0f2f4e]/10 shadow-lg">
