@@ -8,6 +8,8 @@ import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import type { PublicEmpreendimentoDetail, PublicGaleriaFoto, PublicTipologia } from "../../../lib/types";
 import { buildEmpreendimentoPath, parseEmpreendimentoParam, slugifyValue } from "../../../lib/urls";
 import { ImageGallery } from "@/components/empreendimentos/ImageGallery";
+import { CardPhotoSlider } from "@/components/empreendimentos/CardPhotoSlider";
+import { TipologiasInteractive } from "@/components/empreendimentos/TipologiasInteractive";
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { LeadForm } from "@/components/shared/LeadForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -183,12 +185,21 @@ export default async function EmpreendimentoPage({ params }: Params) {
       <section
         className="relative overflow-hidden"
         aria-label="Hero do empreendimento"
-        style={{
-          backgroundImage: `url(${(galleryImages[0] ?? empreendimento.imagem_capa ?? '')})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
       >
+        {galleryImages.length > 0 ? (
+          <div className="absolute inset-0">
+            <CardPhotoSlider images={galleryImages} empreendimentoNome={empreendimento.nome} />
+          </div>
+        ) : (
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url(${empreendimento.imagem_capa ?? ''})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          />
+        )}
         <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
         <div className="relative z-10">
           <div className="container flex flex-col gap-8 py-12 text-white md:py-16 min-h-[280px]">
@@ -278,21 +289,6 @@ export default async function EmpreendimentoPage({ params }: Params) {
         </div>
       </section>
 
-      {/* Large gallery */}
-      {galleryImages.length > 0 && (
-        <section className="bg-white">
-          <div className="container py-12">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((src, idx) => (
-                <div key={idx} className="rounded-lg overflow-hidden shadow-lg">
-                  <img src={src} alt={`${empreendimento.nome} - Imagem ${idx + 1}`} className="w-full h-64 object-cover" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Conteúdo principal */}
       <section className="bg-gradient-to-b from-white via-white to-slate-50">
         <div className="container space-y-14 py-14">
@@ -322,65 +318,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
               )}
 
               {tipologias.length > 0 && (
-                <Card className="border border-[#0f2f4e]/10 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-semibold text-[#0f2f4e]">
-                      Tipologias disponíveis
-                    </CardTitle>
-                    <CardDescription>
-                      Conheça as plantas e configurações pensadas para diferentes perfis de investidores.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-2">
-                    {tipologias.map((tipo, index) => (
-                      <div
-                        key={tipo.id ?? index}
-                        className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-sm transition hover:border-[#e5a855] hover:shadow-lg"
-                      >
-                        <div className="mb-4 flex items-start justify-between">
-                          <div className="flex items-center gap-2">
-                            <Home className="h-5 w-5 text-[#e5a855]" />
-                            <h3 className="text-lg font-semibold text-[#0f2f4e]">
-                              {tipo.tipo || `Tipologia ${index + 1}`}
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="grid gap-2 text-sm text-slate-600">
-                          {tipo.quartos && (
-                            <div className="flex justify-between">
-                              <span>Quartos</span>
-                              <span className="font-medium text-[#0f2f4e]">{tipo.quartos}</span>
-                            </div>
-                          )}
-                          {tipo.suites && (
-                            <div className="flex justify-between">
-                              <span>Suítes</span>
-                              <span className="font-medium text-[#0f2f4e]">{tipo.suites}</span>
-                            </div>
-                          )}
-                          {tipo.area_privativa && (
-                            <div className="flex justify-between">
-                              <span>Área privativa</span>
-                              <span className="font-medium text-[#0f2f4e]">{tipo.area_privativa} m²</span>
-                            </div>
-                          )}
-                          {tipo.area_total && (
-                            <div className="flex justify-between">
-                              <span>Área total</span>
-                              <span className="font-medium text-[#0f2f4e]">{tipo.area_total} m²</span>
-                            </div>
-                          )}
-                          {tipo.preco && (
-                            <div className="mt-3 flex items-center justify-between border-t border-slate-200 pt-3 text-sm font-semibold text-[#e5a855]">
-                              <span>Valor</span>
-                              <span>{formatCurrency(tipo.preco)}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+                <TipologiasInteractive tipologias={tipologias} />
               )}
             </div>
 
