@@ -655,7 +655,7 @@ export default async function HomePage({
       <WhatsappButton />
 
       <LeadModalClientWrapper />
-      <DebugOpenModal />
+  {process.env.NEXT_PUBLIC_DEBUG_OPEN_MODAL === "1" && <DebugOpenModal />}
 
       <section className="container py-16 lg:py-24">
         <div className="space-y-8">

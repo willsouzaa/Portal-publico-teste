@@ -34,18 +34,56 @@ export function LeadCaptureModal() {
       // ignore
     }
 
-    // helper para abrir manualmente via console: window.__openLeadModal()
+    // helper para abrir manualmente via console: window.__openLeadModal({ force: true })
     try {
-      (window as any).__openLeadModal = () => {
-        console.log("[LeadModal] __openLeadModal called");
+      (window as any).__openLeadModal = (opts?: { force?: boolean }) => {
+        try {
+          if (!opts?.force && localStorage.getItem(HIDE_AFTER_SUBMIT)) {
+            console.log('[LeadModal] __openLeadModal suppressed: already submitted');
+            return;
+          }
+        } catch (err) {
+          // ignore localStorage errors
+        }
+
+        console.log("[LeadModal] __openLeadModal called", opts);
         shownRef.current = true;
-        localStorage.setItem(STORAGE_KEY, String(Date.now()));
+        try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch {}
         try { setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) }); } catch {}
         setOpen(true);
       };
     } catch (err) {
       // ignore (SSR safety)
     }
+
+    // Open via URL param ?openLeadModal=1 or ?leadModal=1
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if ((params.get("openLeadModal") === "1" || params.get("leadModal") === "1") && !(localStorage.getItem(HIDE_AFTER_SUBMIT))) {
+        console.log('[LeadModal] trigger: url param');
+        try { (window as any).__openLeadModal?.(); } catch {}
+      }
+    } catch (err) {
+      // ignore
+    }
+
+    // Delegated click handler: elements with `data-open-lead` will open the modal.
+    const onDocClick = (e: MouseEvent) => {
+      try {
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
+        const el = target.closest('[data-open-lead]') as HTMLElement | null;
+        if (el) {
+          // Prevent navigation/submission when this attribute is used to open the modal
+          try { e.preventDefault(); } catch {}
+          try { e.stopPropagation(); } catch {}
+          try { (window as any).__openLeadModal?.(); } catch {}
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+    document.addEventListener('click', onDocClick, { capture: true });
 
     if (localStorage.getItem(HIDE_AFTER_SUBMIT)) {
       console.log('[LeadModal] suppressed: already submitted (localStorage)');
@@ -61,7 +99,7 @@ export function LeadCaptureModal() {
       }
     }
 
-    // Delay automático
+    // Delay automático (fallback) - shows after 7s if nothing else opened it
     const timer = setTimeout(() => {
       if (!shownRef.current) {
         console.log('[LeadModal] trigger: delay');
@@ -69,6 +107,21 @@ export function LeadCaptureModal() {
         try { setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) }); } catch {}
       }
     }, 7000); // 7s
+
+    // Open immediately on first visit (short delay) to ensure automatic opening without needing a click
+    // This will not bypass the "submitted" suppression.
+    const immediateTimer = setTimeout(() => {
+      try {
+        if (localStorage.getItem(HIDE_AFTER_SUBMIT)) return;
+      } catch (err) {
+        // ignore
+      }
+      if (!shownRef.current && !localStorage.getItem(STORAGE_KEY)) {
+        console.log('[LeadModal] trigger: immediate (first visit)');
+        openModal('immediate');
+        try { setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) }); } catch {}
+      }
+    }, 1500);
 
     // Scroll 60%
     const onScroll = () => {
@@ -93,8 +146,10 @@ export function LeadCaptureModal() {
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(immediateTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener('click', onDocClick, { capture: true } as any);
     };
   }, []);
 
@@ -230,10 +285,8 @@ export function LeadCaptureModal() {
                 Clear LS
               </button>
               <button
-                onClick={() => {
-                  try { (window as any).__openLeadModal?.(); }
-                  catch {}
-                }}
+                // Use delegated open so behavior is centralized
+                data-open-lead
                 className="px-2 py-1 bg-slate-100 rounded"
               >
                 Force Open
