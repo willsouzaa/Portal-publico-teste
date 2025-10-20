@@ -16,6 +16,7 @@ type FormState = { nome: string; contato: string; tipo: "whatsapp" | "email" };
 
 const STORAGE_KEY = "lead_modal_last_shown";
 const HIDE_AFTER_SUBMIT = "lead_modal_submitted";
+const DRAFT_KEY = "lead_modal_draft";
 
 export function LeadCaptureModal() {
   const [open, setOpen] = useState(false);
@@ -27,6 +28,9 @@ export function LeadCaptureModal() {
   const [submittedOk, setSubmittedOk] = useState(false);
   const [debug, setDebug] = useState({ lastShown: null as string | null, submitted: null as string | null });
   const svgWrapperRef = useRef<HTMLDivElement | null>(null);
+  const autosaveTimer = useRef<number | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+  const draftTokenRef = useRef<string | null>(null);
 
   // Não mostrar se já submeteu
   useEffect(() => {
@@ -38,6 +42,18 @@ export function LeadCaptureModal() {
     // populate debug from localStorage
     try {
       setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) });
+      // load draft if present
+      const rawDraft = localStorage.getItem(DRAFT_KEY);
+      if (rawDraft) {
+        try {
+          const parsed = JSON.parse(rawDraft) as FormState & { savedAt?: string };
+          if ((parsed as any).draft_token) draftTokenRef.current = (parsed as any).draft_token;
+          setForm((prev) => ({ nome: prev.nome || parsed.nome || "", contato: prev.contato || parsed.contato || "", tipo: parsed.tipo || prev.tipo }));
+          if (parsed && (parsed.nome || parsed.contato)) {
+            setDraftSavedAt(parsed.savedAt ? new Date(parsed.savedAt).toLocaleTimeString() : new Date().toLocaleTimeString());
+          }
+        } catch {}
+      }
     } catch (err) {
       // ignore
     }
@@ -150,6 +166,53 @@ export function LeadCaptureModal() {
   window.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
+
+  // Autosave draft to localStorage on form changes and optional server-side autosave (debounced)
+  useEffect(() => {
+    try {
+      // don't save empty drafts
+      if (!form.nome && !form.contato) return;
+      const payload = { ...form, savedAt: new Date().toISOString() };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+      setDraftSavedAt(new Date().toLocaleTimeString());
+
+      // Optional server autosave (debounced). Enable by setting NEXT_PUBLIC_AUTOSAVE_TO_SERVER === '1'
+      const enableServer = process.env.NEXT_PUBLIC_AUTOSAVE_TO_SERVER === "1";
+      if (enableServer) {
+        // clear previous timer
+        if (autosaveTimer.current) window.clearTimeout(autosaveTimer.current as any);
+        autosaveTimer.current = window.setTimeout(async () => {
+          try {
+            // POST to internal API which will persist draft server-side
+            const res = await fetch('/api/leads/quick', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nome: form.nome, contato: form.contato, canal: form.tipo, is_draft: true, draft_token: draftTokenRef.current })
+            });
+            if (res.ok) {
+              const j = await res.json();
+              // store returned draft id/token for subsequent updates
+              if (j?.data?.id) {
+                draftTokenRef.current = String(j.data.id);
+                const raw = localStorage.getItem(DRAFT_KEY);
+                const parsed = raw ? JSON.parse(raw) : {};
+                parsed.draft_token = draftTokenRef.current;
+                localStorage.setItem(DRAFT_KEY, JSON.stringify(parsed));
+              }
+            }
+          } catch (err) {
+            console.error('autosave draft failed', err);
+          }
+        }, 1500) as unknown as number;
+      }
+    } catch (err) {
+      // ignore localStorage errors
+    }
+
+    return () => {
+      if (autosaveTimer.current) window.clearTimeout(autosaveTimer.current as any);
+    };
+  }, [form]);
 
   function openModal(reason?: string) {
     shownRef.current = true;

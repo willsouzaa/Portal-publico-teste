@@ -14,7 +14,7 @@ import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath, buildCityLandingSegment } from "@/lib/urls";
 import WhatsappButton from "./components/WhatsappButton";
 import LeadModalClientWrapper from "@/components/LeadModalClientWrapper";
-import DebugOpenModal from "@/components/DebugOpenModal";
+// DebugOpenModal removed from page - debug button suppressed
 
 export const revalidate = 60;
 
@@ -654,8 +654,7 @@ export default async function HomePage({
 
       <WhatsappButton />
 
-      <LeadModalClientWrapper />
-  {process.env.NEXT_PUBLIC_DEBUG_OPEN_MODAL === "1" && <DebugOpenModal />}
+    <LeadModalClientWrapper />
 
       <section className="container py-16 lg:py-24">
         <div className="space-y-8">

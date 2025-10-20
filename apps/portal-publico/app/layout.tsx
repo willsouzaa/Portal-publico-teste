@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@/components/shared/Analytics";
 import { MetaPixel } from "@/components/shared/MetaPixel";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sanremo.com.br";
 
@@ -52,8 +53,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-slate-50 text-primary-900">
         <Analytics />
         <MetaPixel />
-        <SiteHeader />
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <SiteHeader />
+          <main className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );
