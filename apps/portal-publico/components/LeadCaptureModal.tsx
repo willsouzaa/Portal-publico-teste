@@ -80,10 +80,18 @@ export function LeadCaptureModal() {
       // ignore (SSR safety)
     }
 
-    // Open via URL param ?openLeadModal=1 or ?leadModal=1
+    // Open via URL param ?openLeadModal=1 or ?leadModal=1. Also support
+    // ?forceOpenLeadModal=1 (forces open even if previously submitted) and
+    // ?openLeadModalDebug=1 which behaves the same. This allows QA to test
+    // without clearing localStorage.
+    let forcedOpenFromParam = false;
     try {
       const params = new URLSearchParams(window.location.search);
-      if ((params.get("openLeadModal") === "1" || params.get("leadModal") === "1") && !(localStorage.getItem(HIDE_AFTER_SUBMIT))) {
+      forcedOpenFromParam = params.get("forceOpenLeadModal") === "1" || params.get("openLeadModalDebug") === "1";
+      if (forcedOpenFromParam) {
+        console.log('[LeadModal] trigger: force url param');
+        try { (window as any).__openLeadModal?.({ force: true }); } catch {}
+      } else if ((params.get("openLeadModal") === "1" || params.get("leadModal") === "1") && !(localStorage.getItem(HIDE_AFTER_SUBMIT))) {
         console.log('[LeadModal] trigger: url param');
         try { (window as any).__openLeadModal?.(); } catch {}
       }
@@ -93,8 +101,17 @@ export function LeadCaptureModal() {
 
     // Delegated click handler removed: debug/open buttons on the page no longer trigger modal.
 
-    // In debug mode we may want to bypass suppression for QA/testing
-    const debugBypass = process.env.NEXT_PUBLIC_DEBUG_OPEN_MODAL === "1";
+    // In debug mode we may want to bypass suppression for QA/testing. Consider
+    // build-time flag, runtime localhost, or the force URL param.
+    let debugBypass = process.env.NEXT_PUBLIC_DEBUG_OPEN_MODAL === "1";
+    try {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') debugBypass = true;
+      if (forcedOpenFromParam) debugBypass = true;
+    } catch (err) {
+      // ignore
+    }
+
     if (!debugBypass && localStorage.getItem(HIDE_AFTER_SUBMIT)) {
       console.log('[LeadModal] suppressed: already submitted (localStorage)');
       return;
@@ -234,28 +251,45 @@ export function LeadCaptureModal() {
   async function saveLead(payload: FormState) {
     try {
       setLoading(true);
-      const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
-      const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!url || !anon) throw new Error("Supabase public env missing");
 
-      // Escreve na tabela `leads` via REST (public anon key)
-      await fetch(`${url}/rest/v1/leads`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: anon,
-          Authorization: `Bearer ${anon}`,
-          Prefer: "return=representation",
-        },
+      // Use internal server endpoint to persist the lead. This avoids using
+      // the Supabase anon key in the browser and centralizes validation.
+      const res = await fetch('/api/leads/quick', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: payload.nome,
           contato: payload.contato,
           canal: payload.tipo,
-          created_at: new Date().toISOString(),
+          is_draft: false,
+          draft_token: draftTokenRef.current,
         }),
       });
-      // Marcar para não mostrar de novo
-      localStorage.setItem(HIDE_AFTER_SUBMIT, "1");
+
+      if (!res.ok) {
+        // try to surface server error for debugging
+        const text = await res.text().catch(() => null);
+        console.error('Error saving lead (server):', res.status, text);
+        setLoading(false);
+        return;
+      }
+
+      const j = await res.json().catch(() => null);
+      // store returned id/token if available
+      if (j?.data?.id) {
+        draftTokenRef.current = String(j.data.id);
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          const parsed = raw ? JSON.parse(raw) : {};
+          parsed.draft_token = draftTokenRef.current;
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(parsed));
+        } catch (err) {
+          // ignore localStorage errors
+        }
+      }
+
+      // Mark to not show again
+      try { localStorage.setItem(HIDE_AFTER_SUBMIT, '1'); } catch {}
       try { setDebug({ lastShown: localStorage.getItem(STORAGE_KEY), submitted: localStorage.getItem(HIDE_AFTER_SUBMIT) }); } catch {}
       setSubmittedOk(true);
       setLoading(false);

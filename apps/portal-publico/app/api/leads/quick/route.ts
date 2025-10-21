@@ -15,9 +15,11 @@ export async function POST(request: NextRequest) {
 
     // If draft_token provided, try update
     if (draft_token) {
+      const isDraft = Boolean(is_draft);
+      const status = isDraft ? 'rascunho' : 'novo';
       const { data, error } = await supabase
         .from('leads')
-        .update({ nome, telefone: contato, canal, is_draft: true, updated_at: new Date().toISOString() })
+        .update({ nome, telefone: contato, canal, is_draft: isDraft, status, updated_at: new Date().toISOString() })
         .eq('id', draft_token)
         .select()
         .single();
@@ -30,10 +32,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Insert new draft
+    // Insert new record (draft or final submission)
+    const isDraftInsert = Boolean(is_draft);
+    const insertStatus = isDraftInsert ? 'rascunho' : 'novo';
     const { data, error } = await supabase
       .from('leads')
-      .insert([{ nome, telefone: contato, canal, is_draft: Boolean(is_draft), origem: 'portal_publico', status: 'rascunho', created_at: new Date().toISOString() }])
+      .insert([{ nome, telefone: contato, canal, is_draft: isDraftInsert, origem: 'portal_publico', status: insertStatus, created_at: new Date().toISOString() }])
       .select()
       .single();
 
