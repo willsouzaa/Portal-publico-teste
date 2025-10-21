@@ -13,6 +13,7 @@ import { TipologiasInteractive } from "@/components/empreendimentos/TipologiasIn
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { LeadForm } from "@/components/shared/LeadForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Breadcrumb from '@/components/shared/Breadcrumb';
 
 interface Params {
   params: {
@@ -213,6 +214,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
 
             <div className="grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-center">
               <div className="space-y-6">
+                <Breadcrumb items={[{ label: 'SanRemo', href: '/' }, { label: `Apartamentos em ${empreendimento.cidade}, ${empreendimento.estado}`, href: `/?cidade=${encodeURIComponent(empreendimento.cidade)}&estado=${encodeURIComponent(empreendimento.estado)}` }, { label: empreendimento.nome }]} />
                 <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
                   <span className="rounded-full bg-white/10 px-4 py-1">
                     {empreendimento.cidade} · {empreendimento.estado}

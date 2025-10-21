@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSeededSuggestions } from "@/lib/suggestions";
 import { buildEmpreendimentoPath } from "@/lib/urls";
 import type { PublicEmpreendimento } from "@/lib/types";
+import Breadcrumb from '@/components/shared/Breadcrumb';
 
 export const revalidate = 60;
 
@@ -52,6 +53,7 @@ export default async function LandingPage({ params }: Props) {
 
   return (
     <div className="container py-12">
+      <Breadcrumb items={[{ label: 'SanRemo', href: '/' }, { label: match?.title ?? `Resultados para ${city}` }]} />
       <h1 className="text-2xl font-semibold mb-6">{match?.title ?? `Resultados para ${city}`}</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {empreendimentos.map((emp) => (

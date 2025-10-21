@@ -12,6 +12,7 @@ import { CardPhotoSlider } from "@/components/empreendimentos/CardPhotoSlider";
 import { TipologiasInteractive } from "@/components/empreendimentos/TipologiasInteractive";
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { LeadForm } from "@/components/shared/LeadForm";
+import Breadcrumb from "@/components/shared/Breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Params {
@@ -59,7 +60,7 @@ async function fetchEmpreendimentoById(id: string): Promise<PublicEmpreendimento
     (data as any).galeria = (data as any).galeria.map((g: any) => {
       if (!g) return g;
       if (typeof g === "string") return { url: resolvePublic(g) ?? g };
-  const candidate = g.url ?? g.path ?? g.imagem ?? g.imagem_capa ?? null;
+      const candidate = g.url ?? g.path ?? g.imagem ?? g.imagem_capa ?? null;
       return { ...g, url: resolvePublic(candidate) ?? candidate };
     });
   }
@@ -329,6 +330,16 @@ export default async function EmpreendimentoPage({ params }: Params) {
         }}
       />
 
+      <Breadcrumb
+                  items={[
+                    { label: "SanRemo", href: "/" },
+                    { label: `Apartamentos em ${empreendimento.cidade}, ${empreendimento.estado}`, href: `/?cidade=${encodeURIComponent(empreendimento.cidade)}&estado=${encodeURIComponent(empreendimento.estado)}` },
+                    { label: empreendimento.tipo ?? 'Empreendimentos' },
+                    ...(empreendimento.bairro ? [{ label: empreendimento.bairro, href: `/?bairro=${encodeURIComponent(empreendimento.bairro)}&cidade=${encodeURIComponent(empreendimento.cidade)}` }] : []),
+                    { label: empreendimento.nome }
+                  ]}
+                />
+                
       {/* Hero */}
       <section
         className="relative overflow-hidden"
@@ -336,7 +347,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
       >
         {galleryImages.length > 0 ? (
           <div className="absolute inset-0">
-            <CardPhotoSlider images={galleryImages} empreendimentoNome={empreendimento.nome} />
+            <CardPhotoSlider images={galleryImages} empreendimentoNome={empreendimento.nome} showControls={false} />
           </div>
         ) : (
           <div 
@@ -350,7 +361,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
         )}
         <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
         <div className="relative z-10">
-          <div className="container flex flex-col gap-8 py-12 text-white md:py-16 min-h-[280px]">
+          <div className="container flex flex-col gap-3 py-3 text-white md:py-6 min-h-[120px]">
             <Link
               href="/"
               className="inline-flex items-center gap-2 self-start rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
@@ -361,6 +372,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
 
             <div className="grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-center">
               <div className="space-y-6">
+                
                 <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
                   <span className="rounded-full bg-white/10 px-4 py-1">
                     {empreendimento.cidade} · {empreendimento.estado}
@@ -376,10 +388,10 @@ export default async function EmpreendimentoPage({ params }: Params) {
                 </div>
 
                 <div className="space-y-4">
-                  <h1 className="text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
+                  <h1 className="text-3xl font-semibold leading-tight md:text-4xl lg:text-5xl">
                     {empreendimento.nome}
                   </h1>
-                  <p className="max-w-2xl text-base text-white/90">
+                  <p className="max-w-2xl text-sm text-white/90">
                     {destaqueResumo}
                   </p>
                 </div>
@@ -439,23 +451,34 @@ export default async function EmpreendimentoPage({ params }: Params) {
                       </div>
                     )}
 
-                    {resumoInfo.length > 0 && (
-                      <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-white/80">
-                        {resumoInfo.map(item => (
-                          <div key={item.label} className="flex justify-between">
-                            <span>{item.label}</span>
-                            <span className="font-medium text-white">{item.value}</span>
+                        {resumoInfo.length > 0 && (
+                          <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-white/80">
+                            {resumoInfo.map(item => (
+                              <div key={item.label} className="flex justify-between">
+                                <span>{item.label}</span>
+                                <span className="font-medium text-white">{item.value}</span>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        )}
+
+                        <div className="mt-4">
+                          <a
+                            href={`https://wa.me/554888888888?text=${encodeURIComponent("Quero receber o ebook do " + empreendimento.nome)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex w-full items-center justify-center rounded-xl bg-primary/80 px-4 py-3 text-sm font-semibold text-white"
+                          >
+                            Receber ebook
+                          </a>
+                        </div>
                   </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
+      
       {/* Conteúdo principal */}
       <section className="bg-gradient-to-b from-white via-white to-slate-50">
         <div className="container space-y-14 py-14">
@@ -472,7 +495,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
                       alt={empreendimento.nome}
                     />
                   )}
-
+                  
                   <div className="empreendimento-card__badge-group">
                     {(empreendimento as any).modelo_juridico && (
                       <span className="badge badge--legal">{(empreendimento as any).modelo_juridico === 'spe' ? 'SPE' : (empreendimento as any).modelo_juridico === 'scp' ? 'SCP' : 'INCORP.'}</span>

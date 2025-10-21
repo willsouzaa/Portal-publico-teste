@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { EmpreendimentoList } from "@/components/empreendimentos/EmpreendimentoList";
+import Breadcrumb from '@/components/shared/Breadcrumb';
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath } from "@/lib/urls";
@@ -51,6 +52,7 @@ export default async function AllEmpreendimentosPage({ searchParams }: { searchP
 
   return (
     <div className="container py-16 lg:py-24">
+      <Breadcrumb items={[{ label: 'SanRemo', href: '/' }, { label: 'Todos os empreendimentos' }]} />
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-semibold text-primary-900">Todos os empreendimentos</h1>

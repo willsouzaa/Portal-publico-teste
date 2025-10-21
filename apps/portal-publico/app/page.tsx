@@ -15,6 +15,7 @@ import { buildEmpreendimentoPath, buildCityLandingSegment } from "@/lib/urls";
 import WhatsappButton from "./components/WhatsappButton";
 import LeadModalClientWrapper from "@/components/LeadModalClientWrapper";
 import StaticReviews from '@/components/StaticReviews';
+import Breadcrumb from '@/components/shared/Breadcrumb';
 // DebugOpenModal removed from page - debug button suppressed
 
 export const revalidate = 60;
@@ -500,6 +501,10 @@ export default async function HomePage({
 
   {/* Static reviews section (manually editable cards) */}
   <StaticReviews />
+
+  <div className="container mt-6">
+    <Breadcrumb items={[{ label: 'SanRemo', href: '/' }, { label: `Apartamentos em ${activeCity}, ${activeState}` }]} />
+  </div>
 
       <section className="container py-16 lg:py-24" id="destaques">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
