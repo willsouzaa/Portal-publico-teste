@@ -463,15 +463,15 @@ export default async function HomePage({
           />
         </div>
         {/* Texto alinhado à esquerda */}
-        <div className="relative flex justify-start items-center w-full min-h-[220px] py-6 px-4">
-          <div className="space-y-2 bg-black/40 rounded-xl p-4 shadow-xl backdrop-blur-sm max-w-md w-full text-left z-[9999] relative" style={{ top: '40px', zIndex: 50 }}>
+          <div className="relative flex justify-start items-center w-full min-h-[220px] py-6 px-4">
+          <div className="space-y-2 bg-white/80 rounded-xl p-4 shadow-xl backdrop-blur-sm max-w-md w-full text-left z-[9999] relative" style={{ top: '40px', zIndex: 50 }}>
             <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-secondary">
               Personal Shopper Imobiliário
             </span>
-            <h1 className="text-2xl font-semibold leading-tight text-white sm:text-3xl">
+            <h1 className="text-2xl font-semibold leading-tight text-primary-700 sm:text-3xl" style={{ color: 'hsl(var(--primary))' }}>
               Viva o padrão San Remo no litoral catarinense
             </h1>
-            <p className="max-w-md text-sm text-white/80">
+            <p className="max-w-md text-sm text-primary-700/80" style={{ color: 'hsl(var(--primary) / 0.8)' }}>
               Descubra lançamentos, imóveis em obras e empreendimentos prontos para morar com a curadoria de um time que entende o luxo imobiliário catarinense.
             </p>
 
@@ -483,7 +483,7 @@ export default async function HomePage({
                 width={220}
                 height={220}
                 style={{ opacity: 0, transform: 'translateY(40px)', transition: 'opacity 1s 0.5s, transform 1s 0.5s', animation: 'fadeInUpLogo 1s 0.5s forwards' }}
-                className="opacity-90 object-contain drop-shadow-xl bg-black/40 rounded-xl p-2 shadow-xl backdrop-blur-sm"
+                className="opacity-100 object-contain drop-shadow-xl bg-white/90 rounded-xl p-2 shadow-xl backdrop-blur-sm"
               />
             </div>
             <style>{`
@@ -681,7 +681,7 @@ export default async function HomePage({
               <div key={cidadeTag} className="space-y-6">
                 {/* Imagem da cidade */}
                 {primeiroEmpreendimento && (
-                      <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
+                      <div className="w-full h-48 sm:h-64 lg:h-80 rounded-xl overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
                         {/* Prefer branding images for known cities, fallback to empreendimento.imagem_capa then ImagemCapa.jpg */}
                         <Image
                           src={
@@ -692,8 +692,9 @@ export default async function HomePage({
                               : primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'
                           }
                           alt={`Imóveis em ${cidadeTag}`}
-                          width={1200}
-                          height={400}
+                          // larger intrinsic size to match taller container
+                          width={1600}
+                          height={600}
                           style={{ objectFit: 'contain', objectPosition: 'center' }}
                           className="w-full h-full"
                           priority={false}

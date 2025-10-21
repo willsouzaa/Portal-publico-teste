@@ -54,10 +54,10 @@ export function HeroAnimated({
           <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-secondary">
             Personal Shopper Imobiliário
           </span>
-          <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
+          <h1 className="text-4xl font-semibold leading-tight text-primary-700 sm:text-5xl" style={{ color: 'hsl(var(--primary))' }}>
             Viva o padrão San Remo no litoral catarinense
           </h1>
-          <p className="max-w-2xl text-lg text-white/80">
+          <p className="max-w-2xl text-lg text-primary-700/80" style={{ color: 'hsl(var(--primary) / 0.8)' }}>
             Descubra lançamentos, imóveis em obras e empreendimentos prontos para morar com a curadoria de um time que entende o luxo imobiliário catarinense.
           </p>
         </motion.div>
