@@ -58,7 +58,12 @@ export function TipologiasInteractive({ tipologias }: TipologiasInteractiveProps
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Home className={`h-4 w-4 ${selectedIndex === index ? 'text-[#e5a855]' : 'text-slate-400'}`} />
+                  {tipo.imagem_capa ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={tipo.imagem_capa} alt={tipo.tipo || `Tipologia ${index + 1}`} className="h-6 w-6 rounded object-cover" />
+                  ) : (
+                    <Home className={`h-4 w-4 ${selectedIndex === index ? 'text-[#e5a855]' : 'text-slate-400'}`} />
+                  )}
                   <h3 className={`text-sm font-semibold ${selectedIndex === index ? 'text-[#e5a855]' : 'text-[#0f2f4e]'}`}>
                     {tipo.tipo || `Tipologia ${index + 1}`}
                   </h3>
@@ -80,13 +85,18 @@ export function TipologiasInteractive({ tipologias }: TipologiasInteractiveProps
           <div className="space-y-4">
             {/* Imagem da tipologia */}
             <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-              <div className="w-full h-full flex items-center justify-center text-slate-400">
-                <div className="text-center">
-                  <Home className="h-12 w-12 mx-auto mb-2" />
-                  <p className="text-sm">Planta da {selectedTipo.tipo || 'tipologia'}</p>
-                  <p className="text-xs text-slate-400 mt-1">Imagem em breve</p>
+              {selectedTipo.imagem_capa ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={selectedTipo.imagem_capa} alt={selectedTipo.tipo || 'tipologia'} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                  <div className="text-center">
+                    <Home className="h-12 w-12 mx-auto mb-2" />
+                    <p className="text-sm">Planta da {selectedTipo.tipo || 'tipologia'}</p>
+                    <p className="text-xs text-slate-400 mt-1">Imagem em breve</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Informações detalhadas */}

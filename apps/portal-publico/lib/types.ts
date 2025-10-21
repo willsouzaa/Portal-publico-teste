@@ -9,6 +9,7 @@ export type PublicTipologia = {
   area_total?: number | null;
   metragem?: number | null;
   preco?: number | null;
+  imagem_capa?: string | null;
 };
 
 export type PublicGaleriaFoto = {

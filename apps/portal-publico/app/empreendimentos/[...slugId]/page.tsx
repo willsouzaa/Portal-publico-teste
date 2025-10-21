@@ -23,6 +23,8 @@ interface Params {
 
 async function fetchEmpreendimentoById(id: string): Promise<PublicEmpreendimentoDetail | null> {
   const supabase = createSupabaseServerClient({ schema: "public" });
+  const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET ?? process.env.NEXT_PUBLIC_SUPABASE_BUCKET ?? "empreendimentos";
+
   const { data, error } = await supabase
     .from("public_empreendimentos")
     .select("*")
@@ -34,8 +36,46 @@ async function fetchEmpreendimentoById(id: string): Promise<PublicEmpreendimento
     return null;
   }
 
+  if (!data) return null;
+
+  const resolvePublic = (path?: string | null): string | null => {
+    if (!path) return null;
+    if (typeof path !== "string") return null;
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    try {
+      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(path);
+      return publicData?.publicUrl ?? path;
+    } catch (e) {
+      console.error("Erro ao resolver publicUrl:", e);
+      return path;
+    }
+  };
+
+  // Normaliza imagem_capa para URL pública
+  (data as any).imagem_capa = resolvePublic((data as any).imagem_capa) ?? (data as any).imagem_capa;
+
+  // Normaliza galeria (aceita array de strings ou objetos)
+  if (Array.isArray((data as any).galeria)) {
+    (data as any).galeria = (data as any).galeria.map((g: any) => {
+      if (!g) return g;
+      if (typeof g === "string") return { url: resolvePublic(g) ?? g };
+  const candidate = g.url ?? g.path ?? g.imagem ?? g.imagem_capa ?? null;
+      return { ...g, url: resolvePublic(candidate) ?? candidate };
+    });
+  }
+
+  // Normaliza imagens das tipologias (imagem_capa ou campos alternativos)
+  if (Array.isArray((data as any).tipologias)) {
+    (data as any).tipologias = (data as any).tipologias.map((t: any) => {
+      if (!t) return t;
+      const candidate = t.imagem_capa ?? t.url ?? t.path ?? t.imagem ?? null;
+      return { ...t, imagem_capa: resolvePublic(candidate) ?? candidate };
+    });
+  }
+
   return data;
 }
+
 
 async function fetchRegionSuggestions(
   cidade: string,
