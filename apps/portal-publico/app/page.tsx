@@ -681,17 +681,25 @@ export default async function HomePage({
               <div key={cidadeTag} className="space-y-6">
                 {/* Imagem da cidade */}
                 {primeiroEmpreendimento && (
-                  <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg">
-                    <Image
-                      src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
-                      alt={`Imóveis em ${cidadeTag}`}
-                      width={1200}
-                      height={400}
-                      className="object-cover w-full h-full"
-                      priority={false}
-                    />
-                  </div>
-                )}
+                      <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
+                        {/* Prefer branding images for known cities, fallback to empreendimento.imagem_capa then ImagemCapa.jpg */}
+                        <Image
+                          src={
+                            cityOnly.toLowerCase().includes('florian')
+                              ? '/branding/florianopolis.jpg'
+                              : cityOnly.toLowerCase().includes('são josé') || cityOnly.toLowerCase().includes('sao jose')
+                              ? '/branding/saojose.jpg'
+                              : primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'
+                          }
+                          alt={`Imóveis em ${cidadeTag}`}
+                          width={1200}
+                          height={400}
+                          style={{ objectFit: 'contain', objectPosition: 'center' }}
+                          className="w-full h-full"
+                          priority={false}
+                        />
+                      </div>
+                    )}
                 
                 {/* Título da cidade */}
                 <h3 className="text-xl font-semibold text-primary-900">{cidadeTag}</h3>
