@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { HeroAnimated } from "@/components/HeroAnimated";
+import GoogleReviews from '@/components/GoogleReviews';
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { EmpreendimentoList } from "@/components/empreendimentos/EmpreendimentoList";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,6 @@ import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath, buildCityLandingSegment } from "@/lib/urls";
 import WhatsappButton from "./components/WhatsappButton";
 import LeadModalClientWrapper from "@/components/LeadModalClientWrapper";
-import StaticReviews from '@/components/StaticReviews';
-import Breadcrumb from '@/components/shared/Breadcrumb';
 // DebugOpenModal removed from page - debug button suppressed
 
 export const revalidate = 60;
@@ -452,59 +450,47 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListStructuredData) }}
       />
 
-      <section className="relative isolate overflow-hidden bg-slate-950 py-10 text-white lg:py-16">
-        <div className="absolute inset-0 w-full h-full">
+      {/* Hero */}
+      <section
+        className="relative overflow-hidden"
+        aria-label="Hero da página inicial"
+      >
+        <div className="absolute inset-0">
           <Image
             src="/branding/ImagemCapa.jpg"
             alt="Ponte Hercílio Luz, Florianópolis"
             fill
             style={{ objectFit: 'cover', objectPosition: 'center' }}
             priority={true}
-            className="z-0 w-full h-full"
+            className="z-0"
           />
         </div>
-        {/* Texto alinhado à esquerda */}
-          <div className="relative flex justify-start items-center w-full min-h-[220px] py-6 px-4">
-          <div className="space-y-2 bg-white/80 rounded-xl p-4 shadow-xl backdrop-blur-sm max-w-md w-full text-left z-[9999] relative" style={{ top: '40px', zIndex: 50 }}>
-            <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-secondary">
-              Personal Shopper Imobiliário
-            </span>
-            <h1 className="text-2xl font-semibold leading-tight text-primary-700 sm:text-3xl" style={{ color: 'hsl(var(--primary))' }}>
-              Viva o padrão San Remo no litoral catarinense
-            </h1>
-            <p className="max-w-md text-sm text-primary-700/80" style={{ color: 'hsl(var(--primary) / 0.8)' }}>
-              Descubra lançamentos, imóveis em obras e empreendimentos prontos para morar com a curadoria de um time que entende o luxo imobiliário catarinense.
-            </p>
+        <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
+        <div className="relative z-10">
+          <div className="w-full max-w-none px-6 md:px-12 lg:px-16 flex flex-col gap-8 py-16 text-white md:py-24 lg:py-32 min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+            <div className="grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-center">
+              <div className="space-y-6">
+                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
+                  <span className="rounded-full bg-white/10 px-4 py-1">
+                    Personal Shopper Imobiliário
+                  </span>
+                </div>
 
-            {/* Logo animada - agora dentro do card para garantir overlay em telas grandes (lg+) */}
-            <div className="hidden lg:block absolute -top-12 -right-28">
-              <img
-                src="/branding/san-remo-logo.png"
-                alt="San Remo Logo"
-                width={220}
-                height={220}
-                style={{ opacity: 0, transform: 'translateY(40px)', transition: 'opacity 1s 0.5s, transform 1s 0.5s', animation: 'fadeInUpLogo 1s 0.5s forwards' }}
-                className="opacity-100 object-contain drop-shadow-xl bg-white/90 rounded-xl p-2 shadow-xl backdrop-blur-sm"
-              />
+                <div className="space-y-4">
+                  <h1 className="text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
+                   Os melhores lançamentos de Florianópolis em um só lugar.
+                  </h1>
+                  <p className="max-w-2xl text-base text-white/90">
+                   Encontre o empreendimento ideal para investir ou morar em Florianópolis.                  </p>
+                </div>
+              </div>
             </div>
-            <style>{`
-              @keyframes fadeInUpLogo {
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
-              }
-            `}</style>
           </div>
         </div>
       </section>
 
-  {/* Static reviews section (manually editable cards) */}
-  <StaticReviews />
-
-  <div className="container mt-6">
-    <Breadcrumb items={[{ label: 'SanRemo', href: '/' }, { label: `Apartamentos em ${activeCity}, ${activeState}` }]} />
-  </div>
+  {/* Google Reviews inserted below the hero */}
+  <GoogleReviews />
 
       <section className="container py-16 lg:py-24" id="destaques">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -686,26 +672,17 @@ export default async function HomePage({
               <div key={cidadeTag} className="space-y-6">
                 {/* Imagem da cidade */}
                 {primeiroEmpreendimento && (
-                      <div className="w-full h-48 sm:h-64 lg:h-80 rounded-xl overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
-                        {/* Prefer branding images for known cities, fallback to empreendimento.imagem_capa then ImagemCapa.jpg */}
-                        <Image
-                          src={
-                            cityOnly.toLowerCase().includes('florian')
-                              ? '/branding/florianopolis.jpg'
-                              : cityOnly.toLowerCase().includes('são josé') || cityOnly.toLowerCase().includes('sao jose')
-                              ? '/branding/saojose.jpg'
-                              : primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'
-                          }
-                          alt={`Imóveis em ${cidadeTag}`}
-                          // larger intrinsic size to match taller container
-                          width={1600}
-                          height={600}
-                          style={{ objectFit: 'contain', objectPosition: 'center' }}
-                          className="w-full h-full"
-                          priority={false}
-                        />
-                      </div>
-                    )}
+                  <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg">
+                    <Image
+                      src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
+                      alt={`Imóveis em ${cidadeTag}`}
+                      width={1200}
+                      height={400}
+                      className="object-cover w-full h-full"
+                      priority={false}
+                    />
+                  </div>
+                )}
                 
                 {/* Título da cidade */}
                 <h3 className="text-xl font-semibold text-primary-900">{cidadeTag}</h3>
