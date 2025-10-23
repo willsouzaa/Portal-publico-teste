@@ -22,6 +22,7 @@ import SearchCard from '@/components/SearchCard';
 import MostSearched from '@/components/MostSearched';
 
 
+
 // DebugOpenModal removed from page - debug button suppressed
 
 export const revalidate = 60;
@@ -547,13 +548,11 @@ export default async function HomePage({
               <p className="max-w-lg text-sm text-white/85">Análise estratégica, negociação e acompanhamento até a entrega — com quem entende do mercado local.</p>
 
               <div className="flex flex-wrap items-center gap-3">
-                <Button asChild className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 text-sm font-semibold shadow-md transition">
-                  <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</Link>
-                </Button>
-
-                <Button asChild variant="outline" className="rounded-xl border-white/20 text-white px-5 py-3 text-sm font-medium hover:bg-white/5 transition">
-                  <Link href="/contato">Agendar conversa</Link>
-                </Button>
+                <Button asChild variant="accent" size="default" className="rounded-xl px-6 py-3 text-sm font-semibold shadow-md">
+  <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">
+    Falar no WhatsApp
+  </Link>
+</Button>
               </div>
             </div>
 
