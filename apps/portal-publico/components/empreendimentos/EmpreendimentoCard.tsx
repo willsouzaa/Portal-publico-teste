@@ -121,7 +121,7 @@ export function EmpreendimentoCard({ empreendimento, slug }: EmpreendimentoCardP
 
         <div className="flex-1" />
         <Link href={detalhesHref} className="block" aria-label={`Ver detalhes do empreendimento ${empreendimento.nome}`}>
-          <Button className="w-full rounded-xl bg-primary py-5 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90">
+          <Button variant="accent" className="w-full rounded-xl py-5 text-base font-semibold shadow-sm">
             Ver detalhes
           </Button>
         </Link>

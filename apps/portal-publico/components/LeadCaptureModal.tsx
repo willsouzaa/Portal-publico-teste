@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import SectionTitle from '@/components/typography/SectionTitle';
 
 type FormState = { nome: string; contato: string; tipo: "whatsapp" | "email" };
 
@@ -81,9 +82,7 @@ export function LeadCaptureModal() {
             className="h-10 mb-4 animate-pulse drop-shadow-lg"
           />
 
-          <h2 className="text-3xl font-extrabold tracking-tight mb-2">
-            💎 Atendimento Exclusivo San Remo
-          </h2>
+          <SectionTitle className="mb-2">💎 Atendimento Exclusivo San Remo</SectionTitle>
           <p className="text-white/90 text-sm max-w-md mb-6 leading-relaxed">
             Preencha abaixo e garanta <strong>um contato direto com nosso consultor</strong> —
             descubra as oportunidades de investimento mais seguras e rentáveis do momento.

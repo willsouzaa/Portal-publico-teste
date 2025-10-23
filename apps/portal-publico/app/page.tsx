@@ -3,6 +3,9 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import GoogleReviews from '@/components/GoogleReviews';
+import Eyebrow from '@/components/typography/Eyebrow';
+import SectionTitle from '@/components/typography/SectionTitle';
+import SectionLead from '@/components/typography/SectionLead';
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { EmpreendimentoList } from "@/components/empreendimentos/EmpreendimentoList";
 import { Button } from "@/components/ui/button";
@@ -14,6 +17,11 @@ import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath, buildCityLandingSegment } from "@/lib/urls";
 import WhatsappButton from "./components/WhatsappButton";
 import LeadModalClientWrapper from "@/components/LeadModalClientWrapper";
+import StaticReviews  from '@/components/empreendimentos/StaticReviews';
+import SearchCard from '@/components/SearchCard';
+import MostSearched from '@/components/MostSearched';
+
+
 // DebugOpenModal removed from page - debug button suppressed
 
 export const revalidate = 60;
@@ -483,23 +491,24 @@ export default async function HomePage({
                   <p className="max-w-2xl text-base text-white/90">
                    Encontre o empreendimento ideal para investir ou morar em Florianópolis.                  </p>
                 </div>
+
+                <div className="flex flex-wrap items-center gap-6 text-sm text-white/90 md:text-base">
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-  {/* Google Reviews inserted below the hero */}
-  <GoogleReviews />
-
-      <section className="container py-16 lg:py-24" id="destaques">
+      
+  <section className="container py-6 lg:py-10" id="destaques">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Curadoria San Remo</span>
-            <h2 className="text-3xl font-semibold text-primary-900">Destaques da semana</h2>
-            <p className="max-w-2xl text-base text-slate-500">
+            {/* Typography components for consistent section headings */}
+            <Eyebrow>Curadoria San Remo</Eyebrow>
+            <SectionTitle>Destaques da semana</SectionTitle>
+            <SectionLead>
               Selecionamos oportunidades com condições especiais, localização privilegiada e diferenciais de alto padrão para você investir com segurança.
-            </p>
+            </SectionLead>
           </div>
           <Button
             asChild
@@ -510,7 +519,8 @@ export default async function HomePage({
           </Button>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        
+  <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {highlights.length > 0 ? (
             highlights.map((emp) => (
               <EmpreendimentoCard key={emp.id} empreendimento={emp} slug={slugMap[emp.id]} />
@@ -526,57 +536,11 @@ export default async function HomePage({
             </Card>
           )}
         </div>
-      </section>
-
-      <section className="bg-slate-950 py-16 text-white lg:py-24">
-        <div className="container grid gap-12 lg:grid-cols-[minmax(0,1fr)_2fr] lg:items-center">
-          <div className="space-y-5">
-            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Experiência San Remo</span>
-            <h2 className="text-3xl font-semibold">Uma jornada guiada pela confiança</h2>
-            <p className="text-sm text-white/70">
-              Mais do que apresentar imóveis, conectamos projetos a pessoas, traduzindo objetivos de vida em investimentos imobiliários estratégicos.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {BENEFITS.map((benefit) => (
-              <Card key={benefit.title} className="h-full rounded-2xl border-white/10 bg-white/5 p-6 backdrop-blur">
-                <CardHeader className="space-y-3 p-0">
-                  <CardTitle className="text-xl font-semibold text-secondary">{benefit.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 pt-3 text-sm text-white/80">
-                  {benefit.description}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="container py-16 lg:py-24" id="portfolio">
-        <div className="space-y-3">
-          <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Portfólio completo</span>
-          <h2 className="text-3xl font-semibold text-primary-900">Encontre o imóvel ideal</h2>
-          <p className="max-w-2xl text-base text-slate-500">
-            Filtre por cidade, tipologia, status da obra e faixa de investimento. Todos os dados são atualizados em tempo real com nossa curadoria no Supabase.
-          </p>
-        </div>
-
-        <div className="mt-12">
-          <EmpreendimentoList
-            empreendimentos={empreendimentos}
-            slugMap={slugMap}
-            initialFilters={initialFilterState}
-            filterOptions={filterOptions}
-            initialLimit={10}
-          />
-        </div>
-      </section>
-
-      <section className="container py-16 lg:py-24" style={{ marginTop: '-200px', position: 'relative', zIndex: 2 }}>
+  </section>
+  <section className="container py-6 lg:py-10 relative z-10">
         <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[#193d6a] p-10 text-white shadow-2xl lg:p-14">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
-            <div className="space-y-6">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+            <div className="space-y-8">
               <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Consultoria personalizada</span>
               <h2 className="text-3xl font-semibold text-primary-900">Vamos desenhar seu próximo investimento?</h2>
               <p className="max-w-xl text-base text-white/80">
@@ -600,16 +564,16 @@ export default async function HomePage({
               </div>
             </div>
 
-            <div className="space-y-4 text-sm text-white/80">
-              <div className="rounded-2xl bg-white/10 p-5">
+            <div className="space-y-6 text-sm text-white/80">
+              <div className="rounded-2xl bg-white/10 p-6">
                 <p className="font-semibold text-white">Jornada assistida</p>
-                <p className="mt-1">
+                <p className="mt-2">
                   Do briefing inicial à assinatura do contrato, mantemos você informado com relatórios, visitas agendadas e comparativos exclusivos.
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/10 p-5">
+              <div className="rounded-2xl bg-white/10 p-6">
                 <p className="font-semibold text-white">Negociação estratégica</p>
-                <p className="mt-1">
+                <p className="mt-2">
                   Acesso direto aos incorporadores, condições diferenciadas e suporte jurídico para garantir transparência e segurança.
                 </p>
               </div>
@@ -618,6 +582,124 @@ export default async function HomePage({
         </div>
       </section>
 
+      <section className="container py-6 lg:py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 justify-items-center">
+  <SectionTitle className="col-span-full justify-self-start text-left mb-8">Imóveis por bairros e cidades</SectionTitle>
+          
+          {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
+            const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro);
+            const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
+            const [cityOnly] = cidadeTag.split(",").map(s => s.trim());
+            
+            // Remove links duplicados baseado no bairro
+            const bairrosUnicos = Array.from(new Set(empreendimentosCidade.map(e => e.bairro).filter((bairro): bairro is string => Boolean(bairro))));
+            
+            // Divide os bairros em 3 colunas
+            const itemsPorColuna = Math.ceil(bairrosUnicos.length / 3);
+            const coluna1 = bairrosUnicos.slice(0, itemsPorColuna);
+            const coluna2 = bairrosUnicos.slice(itemsPorColuna, itemsPorColuna * 2);
+            const coluna3 = bairrosUnicos.slice(itemsPorColuna * 2);
+            
+            return (
+              <div key={cidadeTag} className="space-y-4 text-center max-w-3xl w-full mx-auto px-6">
+                {/* Imagem da cidade */}
+                {primeiroEmpreendimento && (
+                  <div className="w-full h-80 rounded-xl overflow-hidden bg-slate-100 shadow-lg">
+                    <Image
+                      src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
+                      alt={`Imóveis em ${cidadeTag}`}
+                      width={1200}
+                      height={400}
+                      className="object-cover w-full h-full"
+                      priority={false}
+                    />
+                  </div>
+                )}
+                
+                {/* Título da cidade */}
+                <h3 className="text-xl font-semibold text-primary-900">{cidadeTag}</h3>
+                
+                {/* Três colunas de links */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
+                  <div className="space-y-2">
+                    {coluna1.map((bairro) => (
+                      <Link
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline inline-block text-sm text-center"
+                      >
+                        Apartamentos no bairro {bairro}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {coluna2.map((bairro) => (
+                      <Link
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline inline-block text-sm text-center"
+                      >
+                        Apartamentos no bairro {bairro}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {coluna3.map((bairro) => (
+                      <Link
+                        key={bairro}
+                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
+                        className="text-primary font-medium hover:underline inline-block text-sm text-center"
+                      >
+                        Apartamentos no bairro {bairro}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+                <section className="bg-slate-950 py-6 text-white lg:py-10">
+                  <div className="container grid gap-6 lg:grid-cols-[minmax(0,1fr)_2fr] lg:items-start">
+          <div className="space-y-6">
+            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Experiência San Remo</span>
+            <h2 className="text-3xl font-semibold">Uma jornada guiada pela confiança</h2>
+            <p className="text-sm text-white/70">
+              Mais do que apresentar imóveis, conectamos projetos a pessoas, traduzindo objetivos de vida em investimentos imobiliários estratégicos.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {BENEFITS.map((benefit) => (
+              <Card key={benefit.title} className="h-full rounded-2xl border-white/10 bg-white/5 p-6 backdrop-blur">
+                <CardHeader className="space-y-3 p-0">
+                  <CardTitle className="text-xl font-semibold text-secondary">{benefit.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 pt-3 text-sm text-white/80">
+                  {benefit.description}
+                </CardContent>
+              </Card>
+
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="container py-6 lg:py-10">
+        <MostSearched empreendimentos={empreendimentos} />
+      </section>
+
+   
+
+
+
+      {/* Search card inserted below Destaques da semana */}
+      <section className="container py-6 lg:py-10">
+        <SearchCard />
+      </section>
+          {/*}
       <section className="bg-slate-50 py-16 lg:py-24">
         <div className="container space-y-10">
           <div className="space-y-3">
@@ -645,89 +727,16 @@ export default async function HomePage({
           </div>
         </div>
       </section>
-
+      */}
       <WhatsappButton />
+
+
+      <section className="container py-6 lg:py-10">
+        <StaticReviews />
+      </section>
 
     <LeadModalClientWrapper />
 
-      <section className="container py-16 lg:py-24">
-        <div className="space-y-12">
-          <h2 className="text-2xl font-bold text-primary-900 text-center mb-8">Imóveis por bairros e cidades</h2>
-          
-          {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
-            const empreendimentosCidade = empreendimentos.filter(e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro);
-            const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
-            const [cityOnly] = cidadeTag.split(",").map(s => s.trim());
-            
-            // Remove links duplicados baseado no bairro
-            const bairrosUnicos = Array.from(new Set(empreendimentosCidade.map(e => e.bairro).filter((bairro): bairro is string => Boolean(bairro))));
-            
-            // Divide os bairros em 3 colunas
-            const itemsPorColuna = Math.ceil(bairrosUnicos.length / 3);
-            const coluna1 = bairrosUnicos.slice(0, itemsPorColuna);
-            const coluna2 = bairrosUnicos.slice(itemsPorColuna, itemsPorColuna * 2);
-            const coluna3 = bairrosUnicos.slice(itemsPorColuna * 2);
-            
-            return (
-              <div key={cidadeTag} className="space-y-6">
-                {/* Imagem da cidade */}
-                {primeiroEmpreendimento && (
-                  <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-100 shadow-lg">
-                    <Image
-                      src={primeiroEmpreendimento.imagem_capa || '/branding/ImagemCapa.jpg'}
-                      alt={`Imóveis em ${cidadeTag}`}
-                      width={1200}
-                      height={400}
-                      className="object-cover w-full h-full"
-                      priority={false}
-                    />
-                  </div>
-                )}
-                
-                {/* Título da cidade */}
-                <h3 className="text-xl font-semibold text-primary-900">{cidadeTag}</h3>
-                
-                {/* Três colunas de links */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    {coluna1.map((bairro) => (
-                      <Link
-                        key={bairro}
-                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
-                        className="text-primary font-medium hover:underline block text-sm"
-                      >
-                        Apartamentos no bairro {bairro}
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="space-y-2">
-                    {coluna2.map((bairro) => (
-                      <Link
-                        key={bairro}
-                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
-                        className="text-primary font-medium hover:underline block text-sm"
-                      >
-                        Apartamentos no bairro {bairro}
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="space-y-2">
-                    {coluna3.map((bairro) => (
-                      <Link
-                        key={bairro}
-                        href={`/empreendimentos?cidade=${encodeURIComponent(cityOnly)}&bairro=${encodeURIComponent(bairro)}`}
-                        className="text-primary font-medium hover:underline block text-sm"
-                      >
-                        Apartamentos no bairro {bairro}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
     </>
   );
 }

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Eyebrow from '@/components/typography/Eyebrow';
 
 const NAV_LINKS = {
   explorar: [
@@ -63,7 +65,7 @@ export function SiteFooter() {
         </div>
 
         <nav aria-label="Links de explorar">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.3em] text-secondary">Explorar</h4>
+          <Eyebrow className="text-sm">Explorar</Eyebrow>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
             {NAV_LINKS.explorar.map((link) => (
               <li key={link.href}>
@@ -76,7 +78,7 @@ export function SiteFooter() {
         </nav>
 
         <nav aria-label="Guias e recursos">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.3em] text-secondary">Guias</h4>
+          <Eyebrow className="text-sm">Guias</Eyebrow>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
             {NAV_LINKS.guias.map((link) => (
               <li key={link.href}>
@@ -89,18 +91,13 @@ export function SiteFooter() {
         </nav>
 
         <div className="space-y-4">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.3em] text-secondary">Fale com a San Remo</h4>
+          <Eyebrow className="text-sm">Fale com a San Remo</Eyebrow>
           <p className="text-sm text-white/70">
             Nosso time de consultores auxilia na seleção de imóveis ideais para moradia ou investimento — soluções com foco em resultado.
           </p>
-          <Link
-            href="https://wa.me/55488888888"
-            className="inline-flex items-center justify-center rounded-xl bg-secondary px-5 py-3 text-sm font-semibold text-primary-900 shadow-sm transition hover:bg-secondary/90"
-            aria-label="Conversar por WhatsApp - San Remo"
-            rel="noopener noreferrer"
-          >
-            Conversar por WhatsApp
-          </Link>
+          <Button asChild variant="accent" className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold shadow-sm">
+            <a href="https://wa.me/55488888888" aria-label="Conversar por WhatsApp - San Remo" rel="noopener noreferrer">Conversar por WhatsApp</a>
+          </Button>
           <div className="flex items-center gap-3 mt-2">
             {SOCIAL_LINKS.map(({ href, icon: Icon, label }) => (
               <a

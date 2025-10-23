@@ -1,0 +1,91 @@
+"use client";
+
+function StarIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg className={`h-4 w-4 ${filled ? 'text-amber-400' : 'text-slate-200'}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.973a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.972c.3.922-.755 1.688-1.54 1.118L10 13.347l-3.49 2.161c-.784.57-1.84-.196-1.54-1.118l1.287-3.972a1 1 0 00-.364-1.118L2.505 9.4c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.973z" />
+    </svg>
+  );
+}
+
+export default function StaticReviews() {
+  // Editable static reviews array
+  const reviews = [
+    {
+      author: 'Marcia Boechat',
+      rating: 5,
+      text: 'Pense num atendimento VIP personalizado e ainda socorrista. Essa pessoa foi a Regiane do San Remo Imóveis. Pude contar com ela a qualquer hora do dia. Lá estava ela para nos dar apoio e sugestões para que a nossa experiência desse certo.',
+      when: 'há 2 semanas'
+    },
+    {
+      author: 'Luciane Neiwert Raffin',
+      rating: 5,
+      text: 'Muito bom ser cliente e poder contar com a agilidade e competência da advogada Mirella, sempre prontos para resolver e orientar sobre os serviços da imobiliária.',
+      when: 'há 2 meses'
+    },
+    {
+      author: 'Gabriel Gadotti',
+      rating: 5,
+      text: 'Nossa experiência com a San Remo foi ótima. Todas as informações foram passadas com muita clareza e o processo para visitar a casa que estamos alugando também foi excelente.',
+      when: 'há 4 meses'
+    }
+  ];
+
+  const total = reviews.length;
+  const avg = (reviews.reduce((s, r) => s + (r.rating ?? 0), 0) / Math.max(1, total));
+
+  // Short link to Google Maps (edit if you want a different URL)
+  const googleLink = 'https://maps.app.goo.gl/jGQwRDnMk76AkMXH7';
+
+  return (
+    <section className="container py-8" aria-label="Avaliações San Remo">
+      <div className="rounded-2xl border p-6 bg-white shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-extrabold text-primary-900">{avg.toFixed(1)}</div>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <StarIcon key={i} filled={i < Math.round(avg)} />
+                ))}
+              </div>
+            </div>
+            <div className="text-sm text-slate-500">Avaliação média · {total} avaliações</div>
+          </div>
+
+          <div className="text-right">
+            <a href={googleLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary/5">
+              Ver no Google
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 3h7v7m0 0L10 21l-7-7 11-11z" /></svg>
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {reviews.map((r, i) => (
+            <article key={i} className="rounded-lg border p-4 bg-white">
+              <div className="flex items-start gap-3">
+                <div className="flex-none">
+                  <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-semibold text-primary-700">{r.author.split(' ').map(s => s[0]).slice(0,2).join('')}</div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-semibold">{r.author}</div>
+                    <div className="text-xs text-slate-500">{r.when}</div>
+                  </div>
+                  <div className="mt-1 flex items-center gap-1">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <StarIcon key={j} filled={j < r.rating} />
+                    ))}
+                    <div className="ml-2 text-xs text-slate-400">{r.rating}★</div>
+                  </div>
+                  <div className="mt-2 text-sm text-slate-700">{r.text}</div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -23,9 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const j = await res.json();
-    // Normalize and return a minimal shape, include google status for debug
-    const googleStatus = j.status ?? null;
-    const googleErrorMessage = j.error_message ?? null;
+    // Normalize and return a minimal shape
     const result = j.result ?? {};
     const rating = result.rating ?? null;
     const user_ratings_total = result.user_ratings_total ?? null;
@@ -50,7 +48,7 @@ export async function GET(request: NextRequest) {
       // ignore param parsing errors
     }
 
-  return NextResponse.json({ success: true, rating, user_ratings_total, reviews, googleStatus, googleErrorMessage }, { status: 200 });
+    return NextResponse.json({ success: true, rating, user_ratings_total, reviews }, { status: 200 });
   } catch (err) {
     console.error('Error in /api/google-reviews', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

@@ -137,7 +137,7 @@ export function SiteHeader() {
             </nav>
           </div>
           <div className="hidden lg:flex items-center">
-            <Button asChild className="rounded-xl bg-secondary px-5 py-2 text-sm font-semibold text-primary-900 shadow-sm transition hover:bg-secondary/90 ml-8">
+            <Button asChild variant="accent" className="rounded-xl px-5 py-2 text-sm font-semibold shadow-sm transition ml-8">
               <a href="https://lancamentos.sanremoimoveis.com.br/" target="_blank" rel="noopener noreferrer">Entrar</a>
             </Button>
           </div>
@@ -218,7 +218,7 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Button asChild className="mt-2 rounded-xl bg-secondary text-sm font-semibold text-primary-900 shadow-sm hover:bg-secondary/90">
+            <Button asChild variant="accent" className="mt-2 rounded-xl text-sm font-semibold shadow-sm">
               <Link href="/entrar">Entrar</Link>
             </Button>
           </nav>

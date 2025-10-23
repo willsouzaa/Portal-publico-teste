@@ -5,10 +5,9 @@ import { useState } from "react";
 interface CardPhotoSliderProps {
   images: string[];
   empreendimentoNome: string;
-  showControls?: boolean;
 }
 
-export function CardPhotoSlider({ images, empreendimentoNome, showControls = true }: CardPhotoSliderProps) {
+export function CardPhotoSlider({ images, empreendimentoNome }: CardPhotoSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) {
@@ -47,7 +46,7 @@ export function CardPhotoSlider({ images, empreendimentoNome, showControls = tru
         </div>
         
         {/* Navigation Buttons */}
-        {showControls && images.length > 1 && (
+        {images.length > 1 && (
           <>
             <button 
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 p-2 rounded-full shadow-md transition-all duration-200 backdrop-blur-sm z-10"
@@ -70,14 +69,14 @@ export function CardPhotoSlider({ images, empreendimentoNome, showControls = tru
         )}
         
         {/* Photo Counter */}
-        {showControls && images.length > 1 && (
+        {images.length > 1 && (
           <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs backdrop-blur-sm z-10">
             {currentIndex + 1}/{images.length}
           </div>
         )}
         
         {/* Dot indicators */}
-        {showControls && images.length > 1 && images.length <= 5 && (
+        {images.length > 1 && images.length <= 5 && (
           <div className="absolute bottom-2 left-2 flex gap-1 z-10">
             {images.map((_, idx) => (
               <button

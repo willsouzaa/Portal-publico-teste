@@ -128,7 +128,8 @@ export function LeadForm({ empreendimentoId, empreendimentoNome }: LeadFormProps
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-xl bg-secondary text-primary-900 shadow-sm transition hover:bg-secondary/90"
+            variant="accent"
+            className="h-12 w-full rounded-xl shadow-sm"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
