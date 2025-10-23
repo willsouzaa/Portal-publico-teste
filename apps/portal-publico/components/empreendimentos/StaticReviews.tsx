@@ -42,17 +42,8 @@ export default function StaticReviews() {
 
   return (
     <section className="container py-8" aria-label="Avaliações San Remo">
-      <div className="flex items-center justify-between mb-4">
         <div>
           <SectionTitle className="text-3xl">O que nossos clientes dizem</SectionTitle>
-          <div className="flex items-center gap-3 mt-2">
-            <div className="text-3xl font-extrabold text-primary-900">{avg.toFixed(1)}</div>
-            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => (
-              <StarIcon key={i} filled={i < Math.round(avg)} />
-            ))}</div>
-          </div>
-          <div className="text-sm text-slate-500 mt-1">Avaliação média · {total} avaliações</div>
-        </div>
 
         <div className="text-right">
           <a href={googleLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary/5">
