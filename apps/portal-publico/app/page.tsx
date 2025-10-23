@@ -477,7 +477,7 @@ export default async function HomePage({
         <div className="relative z-10">
           <div className="w-full max-w-none px-6 md:px-12 lg:px-16 flex flex-col gap-8 py-16 text-white md:py-24 lg:py-32 min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
             <div className="grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-center">
-              <div className="space-y-6">
+              <div className="space-y-6 max-w-xl">
                 <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
                   <span className="rounded-full bg-white/10 px-4 py-1">
                     Personal Shopper Imobiliário
@@ -486,10 +486,11 @@ export default async function HomePage({
 
                 <div className="space-y-4">
                   <h1 className="text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
-                   Os melhores lançamentos de Florianópolis em um só lugar.
+                   Os melhores <br /> lançamentos de <br />Florianópolis em <br /> um só lugar.
                   </h1>
-                  <p className="max-w-2xl text-base text-white/90">
-                   Encontre o empreendimento ideal para investir ou morar em Florianópolis.                  </p>
+                  <p className="text-base text-white/90">
+                   Encontre o empreendimento ideal <br /> para investir ou morar em <br /> Florianópolis.
+                  </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-6 text-sm text-white/90 md:text-base">
@@ -504,8 +505,8 @@ export default async function HomePage({
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
             {/* Typography components for consistent section headings */}
-            <Eyebrow>Curadoria San Remo</Eyebrow>
-            <SectionTitle>Destaques da semana</SectionTitle>
+              <Eyebrow>Curadoria San Remo</Eyebrow>
+              <SectionTitle className="col-span-full justify-self-start text-left mb-8">Imóveis por bairros e cidades</SectionTitle>
             <SectionLead>
               Selecionamos oportunidades com condições especiais, localização privilegiada e diferenciais de alto padrão para você investir com segurança.
             </SectionLead>
@@ -537,45 +538,33 @@ export default async function HomePage({
           )}
         </div>
   </section>
-  <section className="container py-6 lg:py-10 relative z-10">
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[#193d6a] p-10 text-white shadow-2xl lg:p-14">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-            <div className="space-y-8">
-              <span className="text-xs font-semibold uppercase tracking-[0.4em] text-secondary">Consultoria personalizada</span>
-              <h2 className="text-3xl font-semibold text-primary-900">Vamos desenhar seu próximo investimento?</h2>
-              <p className="max-w-xl text-base text-white/80">
-                Briefing estratégico, análise financeira, visitas acompanhadas e suporte jurídico. Nosso time conduz todo o processo para que você realize um negócio seguro e personalizado.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  asChild
-                  className="rounded-xl border-primary/30 px-6 py-3 text-sm font-semibold text-primary-900 shadow-sm transition hover:text-white hover:bg-primary/700"
-                >
-                  <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">
-                    Conversar pelo WhatsApp
-                  </Link>
+      <section className="container py-6 lg:py-10 relative z-10">
+        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[#193d6a] p-8 text-white shadow-2xl lg:p-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start lg:gap-12">
+            <div className="space-y-4">
+              <span className="text-xs font-semibold uppercase tracking-[0.36em] text-white/90">Consultoria personalizada</span>
+              <h2 className="text-3xl font-bold leading-tight">Seu investimento, do jeito certo.</h2>
+              <p className="max-w-lg text-sm text-white/85">Análise estratégica, negociação e acompanhamento até a entrega — com quem entende do mercado local.</p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Button asChild className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 text-sm font-semibold shadow-md transition">
+                  <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</Link>
                 </Button>
-                <Button
-                  asChild
-                  className="rounded-xl bg-transparent border-primary/30 px-6 py-3 text-sm font-semibold text-primary-900 hover:text-white hover:bg-primary/700 transition-colors duration-200"
-                >
+
+                <Button asChild variant="outline" className="rounded-xl border-white/20 text-white px-5 py-3 text-sm font-medium hover:bg-white/5 transition">
                   <Link href="/contato">Agendar conversa</Link>
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-6 text-sm text-white/80">
-              <div className="rounded-2xl bg-white/10 p-6">
+            <div className="space-y-4 text-sm text-white/80">
+              <div className="rounded-2xl bg-white/6 p-4">
                 <p className="font-semibold text-white">Jornada assistida</p>
-                <p className="mt-2">
-                  Do briefing inicial à assinatura do contrato, mantemos você informado com relatórios, visitas agendadas e comparativos exclusivos.
-                </p>
+                <p className="mt-1 text-xs text-white/80">Acompanhamento completo: briefing, visitas e fechamento.</p>
               </div>
-              <div className="rounded-2xl bg-white/10 p-6">
+              <div className="rounded-2xl bg-white/6 p-4">
                 <p className="font-semibold text-white">Negociação estratégica</p>
-                <p className="mt-2">
-                  Acesso direto aos incorporadores, condições diferenciadas e suporte jurídico para garantir transparência e segurança.
-                </p>
+                <p className="mt-1 text-xs text-white/80">Condições exclusivas com incorporadores parceiros.</p>
               </div>
             </div>
           </div>

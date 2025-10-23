@@ -60,21 +60,21 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-primary/10 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <div className="relative">
-  <div className="container flex h-20 items-center gap-6 relative z-10 justify-between">
+      <div className="container flex h-20 items-center gap-6 relative z-10 justify-between">
           <Link href="/" className="flex items-center gap-3 text-left" aria-label="Ir para a página inicial">
             <span className="relative flex h-40 w-40 items-center justify-center overflow-hidden">
               <Image src="/branding/san-remo-logo.png" alt="San Remo" width={160} height={160} priority className="object-contain" />
             </span>
           </Link>
-          <div className="flex items-center flex-1 gap-6">
-            <form onSubmit={onSubmit} className="flex items-center gap-3 lg:flex">
-              <div className="relative w-full">
+          <div className="flex items-center flex-1 gap-3">
+            <form onSubmit={onSubmit} className="flex items-center gap-3 lg:flex flex-1">
+              <div className="relative w-full max-w-3xl">
                 <Input
                   value={search}
                   onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
                   placeholder="Onde você quer morar?"
                   aria-label="Onde você quer morar?"
-                  className="h-10 rounded-xl border-primary/10 bg-white/95 text-sm placeholder:text-slate-400 pl-10 w-full"
+                  className="h-14 rounded-xl border-primary/10 bg-white/95 text-lg placeholder:text-slate-400 pl-12 w-full"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -84,7 +84,7 @@ export function SiteHeader() {
                 </span>
               </div>
             </form>
-            <nav className="hidden items-center gap-6 text-sm font-medium text-primary/80 lg:flex" aria-label="Menu principal">
+            <nav className="hidden items-center gap-2 text-sm font-medium text-primary/80 lg:flex" aria-label="Menu principal">
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
@@ -137,7 +137,7 @@ export function SiteHeader() {
             </nav>
           </div>
           <div className="hidden lg:flex items-center">
-            <Button asChild variant="accent" className="rounded-xl px-5 py-2 text-sm font-semibold shadow-sm transition ml-8">
+            <Button asChild variant="accent" className="rounded-xl px-5 py-2 text-sm font-semibold shadow-sm transition">
               <a href="https://lancamentos.sanremoimoveis.com.br/" target="_blank" rel="noopener noreferrer">Entrar</a>
             </Button>
           </div>
