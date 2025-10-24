@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import GoogleReviews from '@/components/GoogleReviews';
 import Eyebrow from '@/components/typography/Eyebrow';
@@ -21,7 +22,6 @@ import StaticReviews  from '@/components/empreendimentos/StaticReviews';
 import SearchCard from '@/components/SearchCard';
 import MostSearched from '@/components/MostSearched';
 import RegionCard from '@/components/empreendimentos/RegionCard';
-import { formatLabel } from "@/lib/utils";
 
 
 // DebugOpenModal removed from page - debug button suppressed
@@ -572,35 +572,64 @@ export default async function HomePage({
       </section>
 
           <section className="container py-10">
-  <SectionTitle className="mb-8 text-left">
-    Imóveis por regiões de Santa Catarina
-  </SectionTitle>
+          <SectionTitle className="mb-8 text-left">
+            Imóveis por regiões de Santa Catarina
+          </SectionTitle>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {Array.from(new Set(empreendimentos.map(e => `${e.cidade}, ${e.estado}`))).map((cidadeTag) => {
-      const empreendimentosCidade = empreendimentos.filter(
-        e => `${e.cidade}, ${e.estado}` === cidadeTag && e.bairro
-      );
-      const primeiroEmpreendimento = empreendimentosCidade.find(e => e.imagem_capa);
-      const [cityOnly, stateOnly] = cidadeTag.split(",").map(s => s.trim());
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(() => {
+              const cities = Array.from(new Set(empreendimentos.map((e) => e.cidade)));
+              if (cities.length === 0) return null;
 
-      // Obter bairros únicos
-      const bairrosUnicos = Array.from(
-        new Set(empreendimentosCidade.map(e => e.bairro).filter(Boolean))
-      ).map((b) => String(b));
+              return (
+                <>
+                  {cities.map((cityOnly) => {
+                    const empreendimentosCidade = empreendimentos.filter(
+                      (e) => e.cidade === cityOnly && e.bairro
+                    );
+                    const primeiroEmpreendimento = empreendimentosCidade.find((e) => e.imagem_capa);
 
-      return (
-        <RegionCard
-          key={cidadeTag}
-          city={cityOnly}
-          state={stateOnly}
-          image={primeiroEmpreendimento?.imagem_capa ?? null}
-          bairros={bairrosUnicos}
-        />
-      );
-    })}
-  </div>
-</section>
+                    // Obter bairros únicos
+                    const bairrosUnicos = Array.from(
+                      new Set(empreendimentosCidade.map((e) => e.bairro).filter(Boolean))
+                    ).map((b) => String(b));
+
+                    return (
+                      <RegionCard
+                        key={cityOnly}
+                        city={cityOnly}
+                        state={""} // não exibir estado na imagem
+                        image={primeiroEmpreendimento?.imagem_capa ?? null}
+                        bairros={bairrosUnicos}
+                      />
+                    );
+                  })}
+
+                  {/* CTA card: aparece sempre que houver menos de 3 cidades */}
+                  {cities.length < 3 && (
+                    <div className="">
+                      <Card className="h-full rounded-3xl overflow-hidden shadow-2xl">
+                        <div className="h-full p-6 lg:p-8 bg-gradient-to-br from-primary to-[#193d6a] text-white flex flex-col justify-between">
+                          <div>
+                            <span className="text-xs font-semibold uppercase tracking-[0.36em] text-white/90">Quer mais opções</span>
+                            <h3 className="text-2xl lg:text-3xl font-bold mt-3">Seu investimento, do jeito certo.</h3>
+                            <p className="mt-3 text-sm text-white/85 max-w-md">Explore todos os empreendimentos disponíveis e encontre a opção perfeita para você.</p>
+                          </div>
+
+                          <div className="mt-5">
+                            <Button asChild variant="accent" className="rounded-xl px-6 py-3 text-sm font-semibold shadow-md w-full">
+                              <Link href="/empreendimentos">Ver empreendimentos</Link>
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </section>
 
 
                 <section className="bg-slate-950 py-6 text-white lg:py-10">

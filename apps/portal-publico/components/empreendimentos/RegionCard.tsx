@@ -4,13 +4,13 @@ import React from 'react'
 
 type Props = {
   city: string
-  state: string
+  state?: string
   image?: string | null
   bairros: string[]
 }
 
 export default function RegionCard({ city, state, image, bairros }: Props) {
-  const cidadeTag = `${city}, ${state}`
+  const cidadeTag = state && state.length ? `${city}, ${state}` : city
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
@@ -23,7 +23,7 @@ export default function RegionCard({ city, state, image, bairros }: Props) {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" aria-hidden />
         <h3 className="absolute left-4 bottom-4 text-xl md:text-2xl font-semibold text-white drop-shadow-lg">
-          {city}, {state}
+          {cidadeTag}
         </h3>
       </div>
 
