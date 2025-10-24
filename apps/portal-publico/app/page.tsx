@@ -22,6 +22,9 @@ import StaticReviews  from '@/components/empreendimentos/StaticReviews';
 import SearchCard from '@/components/SearchCard';
 import MostSearched from '@/components/MostSearched';
 import RegionCard from '@/components/empreendimentos/RegionCard';
+import AnimatedReveal from '@/components/AnimatedReveal';
+import { MessageCircle } from "lucide-react";
+
 
 
 // DebugOpenModal removed from page - debug button suppressed
@@ -540,36 +543,62 @@ export default async function HomePage({
           )}
         </div>
   </section>
-      <section className="container py-6 lg:py-10 relative z-10">
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[#193d6a] p-8 text-white shadow-2xl lg:p-12">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start lg:gap-12">
-            <div className="space-y-4">
-              <span className="text-xs font-semibold uppercase tracking-[0.36em] text-white/90">Consultoria personalizada</span>
-              <h2 className="text-3xl font-bold leading-tight">Seu investimento, do jeito certo.</h2>
-              <p className="max-w-lg text-sm text-white/85">Análise estratégica, negociação e acompanhamento até a entrega — com quem entende do mercado local.</p>
+      <section className="container py-12 lg:py-16 relative z-10">
+      <AnimatedReveal className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a1f3f] via-[#163b6b] to-[#0a1f3f] p-10 text-white shadow-2xl relative">
+        {/* animação de brilho sutil */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_60%)] pointer-events-none" />
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Button asChild variant="accent" size="default" className="rounded-xl px-6 py-3 text-sm font-semibold shadow-md">
-  <Link href="https://wa.me/554888888888" target="_blank" rel="noopener noreferrer">
-    Falar no WhatsApp
-  </Link>
-</Button>
-              </div>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+          {/* Texto principal */}
+          <div className="space-y-5 relative z-10">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+              Consultoria personalizada
+            </span>
+
+            <h2 className="text-4xl font-bold leading-tight">
+              Seu <span className="text-[#ff8c1a]">investimento</span>, do jeito certo.
+            </h2>
+
+            <p className="max-w-lg text-base text-white/85">
+              Análise estratégica, negociação e acompanhamento até a entrega —
+              com quem entende do mercado local.
+            </p>
+
+            <Button
+              asChild
+              size="lg"
+              className="rounded-xl bg-[#ff8c1a] hover:bg-[#ff9e3a] text-white font-semibold px-8 py-4 shadow-lg hover:shadow-[#ff8c1a]/40 transition-all duration-300"
+            >
+              <Link
+                href="https://wa.me/554888888888"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MessageCircle size={18} />
+                Falar no WhatsApp
+              </Link>
+            </Button>
+          </div>
+
+          {/* Cards da direita */}
+          <div className="space-y-5 relative z-10">
+            <div className="rounded-2xl bg-white/10 backdrop-blur-sm p-5 shadow-inner hover:bg-white/15 transition">
+              <p className="font-semibold text-white">Jornada assistida</p>
+              <p className="mt-1 text-sm text-white/85">
+                Acompanhamento completo: briefing, visitas e fechamento.
+              </p>
             </div>
-
-            <div className="space-y-4 text-sm text-white/80">
-              <div className="rounded-2xl bg-white/6 p-4">
-                <p className="font-semibold text-white">Jornada assistida</p>
-                <p className="mt-1 text-xs text-white/80">Acompanhamento completo: briefing, visitas e fechamento.</p>
-              </div>
-              <div className="rounded-2xl bg-white/6 p-4">
-                <p className="font-semibold text-white">Negociação estratégica</p>
-                <p className="mt-1 text-xs text-white/80">Condições exclusivas com incorporadores parceiros.</p>
-              </div>
+            <div className="rounded-2xl bg-white/10 backdrop-blur-sm p-5 shadow-inner hover:bg-white/15 transition">
+              <p className="font-semibold text-white">Negociação estratégica</p>
+              <p className="mt-1 text-sm text-white/85">
+                Condições exclusivas com incorporadores parceiros.
+              </p>
             </div>
           </div>
         </div>
-      </section>
+  </AnimatedReveal>
+    </section>
 
           <section className="container py-10">
           <SectionTitle className="mb-8 text-left">
@@ -609,15 +638,15 @@ export default async function HomePage({
                   {cities.length < 3 && (
                     <div className="">
                       <Card className="h-full rounded-3xl overflow-hidden shadow-2xl">
-                        <div className="h-full p-6 lg:p-8 bg-gradient-to-br from-primary to-[#193d6a] text-white flex flex-col justify-between">
+                        <div className="h-full p-6 lg:p-8 bg-gradient-to-br from-[#0a1f3f] via-[#163b6b] to-[#0a1f3f] text-white flex flex-col justify-between">
                           <div>
                             <span className="text-xs font-semibold uppercase tracking-[0.36em] text-white/90">Quer mais opções</span>
-                            <h3 className="text-2xl lg:text-3xl font-bold mt-3">Seu investimento, do jeito certo.</h3>
+                            <h3 className="text-2xl lg:text-3xl font-bold mt-3">Seu <span className="text-[#ff8c1a]">investimento</span>, do jeito certo.</h3>
                             <p className="mt-3 text-sm text-white/85 max-w-md">Explore todos os empreendimentos disponíveis e encontre a opção perfeita para você.</p>
                           </div>
 
                           <div className="mt-5">
-                            <Button asChild variant="accent" className="rounded-xl px-6 py-3 text-sm font-semibold shadow-md w-full">
+                            <Button asChild size="lg" className="rounded-xl bg-[#ff8c1a] hover:bg-[#ff9e3a] text-white font-semibold px-6 py-3 shadow-lg w-full">
                               <Link href="/empreendimentos">Ver empreendimentos</Link>
                             </Button>
                           </div>

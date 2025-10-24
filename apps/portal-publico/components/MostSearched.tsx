@@ -44,32 +44,30 @@ export default function MostSearched({ empreendimentos }: Props) {
           </div>
         </div>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {items.map((emp) => (
-            <article key={emp.id} className="bg-white rounded-lg shadow-sm border overflow-hidden h-full flex flex-col">
-              <div className="flex gap-1 h-36 p-3">
-                {getImages(emp).map((src, i) => (
-                  <div key={i} className="relative flex-1 overflow-hidden rounded-md bg-slate-100">
-                    <Image src={src} alt={`${emp.nome} ${i + 1}`} fill className="object-cover" sizes="(max-width: 640px) 100px, 160px" />
-                  </div>
-                ))}
-                {/* fill placeholders to keep layout */}
-                {Array.from({ length: Math.max(0, 5 - getImages(emp).length) }).map((_, i) => (
-                  <div key={`ph-${i}`} className="flex-1 rounded-md bg-slate-100" />
-                ))}
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="text-sm text-slate-500">{emp.cidade} · {emp.estado}</div>
-                  <div className="mt-1 text-lg font-semibold text-primary-900">{emp.nome}</div>
-                  <div className="text-sm text-slate-700 mt-1">{emp.destaque ?? emp.descricao ?? ''}</div>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+          {/* Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {items.slice(0, 4).map((emp) => (
+              <article key={emp.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <div className="relative w-full h-48 md:h-56 lg:h-48">
+                  {getImages(emp)[0] ? (
+                    <Image src={getImages(emp)[0]} alt={emp.nome} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                  ) : (
+                    <Image src={'/branding/ImagemCapa.jpg'} alt={emp.nome} fill className="object-cover" />
+                  )}
                 </div>
-              </div>
-            </article>
-          ))}
 
-          {/* CTA card */}
-          <article className="col-span-1 md:col-span-1 lg:col-span-1 bg-primary text-white rounded-lg shadow-lg flex flex-col justify-between p-6 h-full">
+                <div className="p-3 text-center">
+                  <h4 className="text-base font-semibold text-slate-800">
+                    {emp.nome}
+                  </h4>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {/* CTA card to the right on large screens */}
+          <article className="bg-primary text-white rounded-lg shadow-lg flex flex-col justify-between p-6 h-full">
             <div>
               <div className="text-sm uppercase tracking-wider font-semibold">Lançamentos</div>
               <h3 className="mt-2 text-2xl font-bold">Confira todos os lançamentos imobiliários de Florianópolis</h3>
@@ -79,7 +77,7 @@ export default function MostSearched({ empreendimentos }: Props) {
               <Button className="bg-white text-primary hover:bg-white/90">Conhecer lançamentos</Button>
             </div>
           </article>
-          </div>
+        </div>
       </div>
     </section>
   );

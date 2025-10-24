@@ -63,11 +63,11 @@ export function LeadCaptureModal() {
   return (
     <Dialog open={open} onOpenChange={(v) => !v && closeModal()}>
       <DialogContent
-        className="
-          relative overflow-hidden rounded-3xl p-0 border-none max-w-[640px]
-          bg-gradient-to-br from-[#FF7A3D] via-[#FF5400] to-[#FF2E00]
-          text-white shadow-2xl"
-      >
+          className="
+            relative overflow-hidden rounded-3xl p-0 border-none max-w-[640px]
+            bg-gradient-to-br from-[#0a1f3f] via-[#163b6b] to-[#0a1f3f]
+            text-white shadow-2xl"
+        >
         {/* Fundo com brilho animado */}
         <div className="absolute inset-0 bg-[url('/textures/noise.svg')] opacity-10 pointer-events-none" />
         <motion.div
@@ -138,7 +138,7 @@ export function LeadCaptureModal() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-full rounded-full bg-white text-[#FF4E00] font-extrabold text-base py-3 tracking-tight shadow-xl hover:brightness-105 hover:scale-[1.03] transition-transform flex items-center justify-center gap-2"
+                className="mt-2 w-full rounded-full bg-[#ff8c1a] hover:bg-[#ff9e3a] text-white font-extrabold text-base py-3 tracking-tight shadow-xl hover:brightness-105 hover:scale-[1.03] transition-transform flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <svg className="h-5 w-5 animate-spin text-[#FF4E00]" viewBox="0 0 24 24">
