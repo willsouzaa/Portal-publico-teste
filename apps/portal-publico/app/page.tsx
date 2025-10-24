@@ -516,15 +516,13 @@ export default async function HomePage({
               Selecionamos oportunidades com condições especiais, localização privilegiada e diferenciais de alto padrão para você investir com segurança.
             </SectionLead>
           </div>
-          <Button
-            asChild
-            variant="outline"
-            className="h-11 rounded-xl border-primary/30 px-5 text-sm font-semibold text-primary hover:border-primary hover:bg-primary/5"
+          <Button variant="accent" className="h-9 w-auto rounded-lg px-3 text-xs font-semibold shadow-sm"
           >
             <Link href="/empreendimentos">Ver todos os empreendimentos</Link>
           </Button>
         </div>
 
+        
         
   <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {highlights.length > 0 ? (
