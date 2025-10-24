@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Calendar, Sparkles, Building2 } from "lucide-react";
-
+import { formatLabel } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -47,6 +47,7 @@ export function EmpreendimentoCard({ empreendimento, slug }: EmpreendimentoCardP
   const price = formatCurrency(empreendimento.preco_minimo);
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
   const detalhesHref = siteUrl ? `${siteUrl}/empreendimentos/${slug}` : `/empreendimentos/${slug}`;
+  const statusLabel = formatLabel(empreendimento.status ?? "");
 
   return (
     <Card className="group flex h-full flex-col overflow-hidden border border-primary/10 bg-white shadow-lg transition hover:-translate-y-1 hover:border-secondary/40 hover:shadow-2xl">
@@ -74,7 +75,7 @@ export function EmpreendimentoCard({ empreendimento, slug }: EmpreendimentoCardP
           )}
           {empreendimento.status && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-xs font-semibold text-white shadow">
-              {formatStatus(empreendimento.status)}
+              {statusLabel}
             </span>
           )}
         </div>
