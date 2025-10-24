@@ -688,7 +688,7 @@ export default async function HomePage({
       </section>
 
       <section className="container py-6 lg:py-10">
-        <MostSearched empreendimentos={empreendimentos} />
+        <MostSearched empreendimentos={empreendimentos} slugMap={slugMap} />
       </section>
 
    
