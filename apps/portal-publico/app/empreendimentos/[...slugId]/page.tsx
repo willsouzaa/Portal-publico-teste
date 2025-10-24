@@ -562,7 +562,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
 
             <aside className="space-y-6">
 
-              <LeadForm empreendimentoId={empreendimento.id} empreendimentoNome={empreendimento.nome} />
+              <LeadForm empreendimentoId={empreendimento.id} empreendimentoNome={empreendimento.nome} precoInicial={formattedMinPrice ?? empreendimento.preco_minimo} />
               {/* WhatsApp banner moved to client component for consistent floating UI */}
             </aside>
           </div>

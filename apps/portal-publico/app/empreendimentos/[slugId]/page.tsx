@@ -12,6 +12,7 @@ import { CardPhotoSlider } from "@/components/empreendimentos/CardPhotoSlider";
 import { TipologiasInteractive } from "@/components/empreendimentos/TipologiasInteractive";
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { LeadForm } from "@/components/shared/LeadForm";
+import WhatsAppBanner from "@/components/WhatsAppBannerClient";
 import Eyebrow from '@/components/typography/Eyebrow';
 import SectionTitle from '@/components/typography/SectionTitle';
 import SectionLead from '@/components/typography/SectionLead';
@@ -154,6 +155,8 @@ export default async function EmpreendimentoPage({ params }: Params) {
     : [];
 
   const destaqueResumo = empreendimento.destaque ?? empreendimento.descricao ?? "Conheça os diferenciais deste empreendimento selecionado pela San Remo.";
+
+  const formattedMinPrice = formatCurrency(empreendimento.preco_minimo);
 
   return (
     <>
@@ -355,7 +358,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
                 </CardContent>
               </Card>
 
-              <LeadForm empreendimentoId={empreendimento.id} empreendimentoNome={empreendimento.nome} />
+              <LeadForm empreendimentoId={empreendimento.id} empreendimentoNome={empreendimento.nome} precoInicial={formattedMinPrice ?? empreendimento.preco_minimo} />
             </aside>
           </div>
         </div>
@@ -392,6 +395,7 @@ export default async function EmpreendimentoPage({ params }: Params) {
           </div>
         </section>
       )}
+      <WhatsAppBanner phone={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER} message={`Olá, tenho interesse no ${empreendimento.nome}`} />
     </>
   );
 }
