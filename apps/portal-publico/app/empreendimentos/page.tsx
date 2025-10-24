@@ -8,6 +8,7 @@ import SectionLead from '@/components/typography/SectionLead';
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath } from "@/lib/urls";
+import WhatsAppBanner from "@/components/WhatsAppBanner";
 
 export const revalidate = 60;
 
@@ -70,6 +71,12 @@ export default async function AllEmpreendimentosPage({ searchParams }: { searchP
         showAll={true}
         initialFilters={initialFilters}
       />
+      <WhatsAppBanner
+        phone="5548988405365"
+        message="Olá! Tenho interesse neste empreendimento."
+      />
     </div>
+
+    
   );
 }
