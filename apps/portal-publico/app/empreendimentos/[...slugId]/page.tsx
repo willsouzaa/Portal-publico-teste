@@ -13,6 +13,7 @@ import { TipologiasInteractive } from "@/components/empreendimentos/TipologiasIn
 import { EmpreendimentoCard } from "@/components/empreendimentos/EmpreendimentoCard";
 import { LeadForm } from "@/components/shared/LeadForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import WhatsAppBanner from "@/components/WhatsAppBannerClient";
 
 interface Params {
   params: {
@@ -456,6 +457,14 @@ export default async function EmpreendimentoPage({ params }: Params) {
         </div>
       </section>
 
+      {/* Floating WhatsApp banner (client component) */}
+      <WhatsAppBanner
+        phone={process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "554899999999"}
+        message={`Olá! Tenho interesse no empreendimento ${empreendimento.nome} - ${canonicalUrl}`}
+        label="Quer falar com um especialista?"
+        sublabel="Respondemos em minutos"
+      />
+
       {/* Conteúdo principal */}
       <section className="bg-gradient-to-b from-white via-white to-slate-50">
         <div className="container space-y-14 py-14">
@@ -485,11 +494,11 @@ export default async function EmpreendimentoPage({ params }: Params) {
                   )}
 
                   {formattedMinPrice && (
-                    <div className="empreendimento-card__price">
-                      <small>A partir de</small>
-                      <div>{formattedMinPrice}</div>
-                    </div>
-                  )}
+                      <div className="mt-3 flex flex-col border-t border-white/15 pt-3">
+                        <span className="text-xs uppercase tracking-[0.12em] text-white/70">A partir de</span>
+                        <span className="text-lg font-semibold text-white">{formattedMinPrice}</span>
+                      </div>
+                    )}
                 </div>
 
                 <div className="empreendimento-card__body">
@@ -552,38 +561,9 @@ export default async function EmpreendimentoPage({ params }: Params) {
             </div>
 
             <aside className="space-y-6">
-              <Card className="border border-[#0f2f4e]/10 bg-white/95 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-[#0f2f4e]">
-                    Informações rápidas
-                  </CardTitle>
-                  <CardDescription>
-                    Principais dados do empreendimento para o seu primeiro contato.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm text-slate-600">
-                  <div className="flex justify-between">
-                    <span>Tipo de empreendimento</span>
-                    <span className="font-medium text-[#0f2f4e]">{empreendimento.tipo ?? "—"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Localização</span>
-                    <span className="font-medium text-[#0f2f4e]">
-                      {empreendimento.cidade}/{empreendimento.estado}
-                    </span>
-                  </div>
-                  {empreendimento.data_entrega_prevista && (
-                    <div className="flex justify-between">
-                      <span>Entrega prevista</span>
-                      <span className="font-medium text-[#0f2f4e]">
-                        {new Date(empreendimento.data_entrega_prevista).toLocaleDateString("pt-BR")}
-                      </span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
 
               <LeadForm empreendimentoId={empreendimento.id} empreendimentoNome={empreendimento.nome} />
+              {/* WhatsApp banner moved to client component for consistent floating UI */}
             </aside>
           </div>
         </div>

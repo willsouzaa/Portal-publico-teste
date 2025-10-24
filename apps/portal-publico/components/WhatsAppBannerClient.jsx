@@ -1,3 +1,5 @@
+"use client";
+
 export default function WhatsAppBanner({
   phone = "5548999999999",
   message = "Olá! Quero saber mais sobre o empreendimento.",

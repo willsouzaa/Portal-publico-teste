@@ -5,6 +5,8 @@ declare module '@/components/WhatsAppBannerClient' {
     phone?: string;
     message?: string;
     className?: string;
+    label?: string;
+    sublabel?: string;
   };
 
   const WhatsAppBanner: React.FC<WhatsAppBannerProps>;

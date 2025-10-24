@@ -8,7 +8,7 @@ function normalize(str?: string | null): string {
     .toLowerCase();
 }
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Building2, Sparkles, TrendingUp } from "lucide-react";
 
@@ -58,7 +58,7 @@ const DEFAULT_FILTERS: FilterState = {
   precoMax: ""
 };
 
-export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, filterOptions, showAll = false, initialLimit = 8 }: EmpreendimentoListProps) {
+export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, filterOptions, showAll = false, initialLimit = 10 }: EmpreendimentoListProps) {
   const initialFilterState = useMemo<FilterState>(
     () => ({
       ...DEFAULT_FILTERS,
@@ -68,6 +68,9 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
   );
 
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
+  // visibleCount controla quantos itens são exibidos no momento (infinite scroll)
+  const [visibleCount, setVisibleCount] = useState<number>(initialLimit);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const filteredEmpreendimentos = useMemo(() => {
     return empreendimentos.filter((emp) => {
@@ -119,6 +122,29 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
     });
   }, [empreendimentos, filters]);
 
+  // Quando os filtros ou a lista base mudam, resetamos a contagem visível
+  useEffect(() => {
+    setVisibleCount(initialLimit);
+  }, [initialLimit, filters, empreendimentos]);
+
+  // IntersectionObserver para carregar mais empreendimentos quando o sentinel entra em view
+  useEffect(() => {
+    if (showAll) return; // nada a fazer quando mostrando tudo
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 10, filteredEmpreendimentos.length));
+        }
+      });
+    }, { root: null, rootMargin: "0px", threshold: 0.1 });
+
+    obs.observe(sentinel);
+    return () => obs.disconnect();
+  }, [filteredEmpreendimentos.length, showAll]);
+
   const stats = {
     total: empreendimentos.length,
     oportunidades: empreendimentos.filter((item) => item.is_oportunidade).length,
@@ -127,43 +153,6 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
 
   return (
     <div className="space-y-10">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary to-[#193d6a] p-6 text-white">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-white/15 p-3">
-              <Building2 className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-3xl font-semibold">{stats.total}</p>
-              <p className="text-sm text-white/80">Empreendimentos</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-secondary/30 bg-gradient-to-br from-secondary to-[#f4ca7a] p-6 text-primary-900">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-primary/10 p-3">
-              <Sparkles className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-3xl font-semibold">{stats.oportunidades}</p>
-              <p className="text-sm text-primary/80">Oportunidades</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-[#193d6a] to-secondary p-6 text-white">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-white/15 p-3">
-              <TrendingUp className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-3xl font-semibold">{stats.lancamentos}</p>
-              <p className="text-sm text-white/80">Lançamentos</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <EmpreendimentoFilters
         onFilterChange={setFilters}
@@ -184,29 +173,23 @@ export function EmpreendimentoList({ empreendimentos, slugMap, initialFilters, f
       {filteredEmpreendimentos.length > 0 ? (
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {filteredEmpreendimentos.slice(0, showAll ? filteredEmpreendimentos.length : initialLimit).map((emp) => (
+            {filteredEmpreendimentos.slice(0, showAll ? filteredEmpreendimentos.length : visibleCount).map((emp) => (
               <EmpreendimentoCard key={emp.id} empreendimento={emp} slug={slugMap[emp.id]} />
             ))}
           </div>
 
-          {filteredEmpreendimentos.length > initialLimit && !showAll && (
-            <div className="mt-6 flex justify-center">
-              <Link
-                href={useMemo(() => {
-                  const params = new URLSearchParams();
-                  if (filters.search) params.set("q", filters.search);
-                  if (filters.cidade) params.set("cidade", filters.cidade);
-                  if (filters.tipo) params.set("tipo", filters.tipo);
-                  if (filters.status) params.set("status", filters.status);
-                  if (filters.precoMin) params.set("precoMin", String(filters.precoMin));
-                  if (filters.precoMax) params.set("precoMax", String(filters.precoMax));
-                  const s = params.toString();
-                  return s ? `/empreendimentos?${s}` : "/empreendimentos";
-                }, [filters])}
+          {/* Sentinel for infinite scroll */}
+          {!showAll && filteredEmpreendimentos.length > visibleCount && (
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <div ref={sentinelRef} aria-hidden="true" className="w-full h-2" />
+              <button
+                type="button"
+                onClick={() => setVisibleCount((v) => Math.min(v + 10, filteredEmpreendimentos.length))}
                 className="inline-flex items-center rounded-xl border border-primary/20 bg-primary/10 px-6 py-3 text-sm font-semibold text-primary hover:bg-primary/20"
               >
-                Ver mais empreendimentos
-              </Link>
+                Carregar mais
+              </button>
+              <p className="text-xs text-slate-400">Role para carregar automaticamente mais resultados</p>
             </div>
           )}
         </>
