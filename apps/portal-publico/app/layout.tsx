@@ -47,8 +47,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <link rel="icon" href="/san-remo-logo.png" />
-        <link rel="apple-touch-icon" href="/san-remo-logo.png" />
+  {/* Use the orange San Remo logo for all favicon/touch/mask icons */}
+  <link rel="icon" href="/san-remo-logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/san-remo-logo.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/san-remo-logo.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/san-remo-logo.png" />
+  {/* Safari pinned tab */}
+  <link rel="mask-icon" href="/san-remo-logo.png" color="#001D38" />
       </head>
       <body className="bg-slate-50 text-primary-900">
         <Analytics />

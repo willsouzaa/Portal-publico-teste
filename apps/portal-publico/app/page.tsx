@@ -21,7 +21,7 @@ import StaticReviews  from '@/components/empreendimentos/StaticReviews';
 import SearchCard from '@/components/SearchCard';
 import MostSearched from '@/components/MostSearched';
 import RegionCard from '@/components/empreendimentos/RegionCard';
-
+import { formatLabel } from "@/lib/utils";
 
 
 // DebugOpenModal removed from page - debug button suppressed
