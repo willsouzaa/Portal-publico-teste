@@ -8,7 +8,7 @@ import SectionLead from '@/components/typography/SectionLead';
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { PublicEmpreendimento } from "@/lib/types";
 import { buildEmpreendimentoPath } from "@/lib/urls";
-import WhatsAppBanner from "@/components/WhatsAppBanner";
+import WhatsAppBanner from "@/components/WhatsAppBannerClient";
 
 export const revalidate = 60;
 

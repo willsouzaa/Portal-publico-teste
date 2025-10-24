@@ -6,7 +6,6 @@ export default function WhatsAppBanner({
 }) {
   const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-  // Make the whole card clickable so users can tap anywhere to open WhatsApp.
   return (
     <a
       href={whatsappUrl}
