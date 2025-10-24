@@ -35,6 +35,7 @@ export type PublicEmpreendimento = {
   imagem_capa?: string | null;
   tipologias?: PublicTipologia[] | null;
   galeria?: PublicGaleriaFoto[] | null;
+  created_at?: string | null;
   updated_at: string;
 };
 

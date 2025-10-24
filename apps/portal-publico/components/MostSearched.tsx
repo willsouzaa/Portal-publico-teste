@@ -24,38 +24,19 @@ function getImages(emp: PublicEmpreendimento) {
 }
 
 export default function MostSearched({ empreendimentos, slugMap }: Props) {
-  // names to pick (in order)
-  const wanted = [
-    'Fragata',
-    'BOSC',
-    'Nautic',
-    'Acqua'
-  ];
-
-  const items = wanted
-    .map((w) => empreendimentos.find((e) => e.nome.toLowerCase().includes(w.toLowerCase())))
-    .filter(Boolean) as PublicEmpreendimento[];
-
-  // Ensure we have up to 3 items: start with wanted matches, then fill from the list
-  const display: PublicEmpreendimento[] = [];
-  const added = new Set<string>();
-
-  for (const it of items) {
-    if (!added.has(it.id)) {
-      display.push(it);
-      added.add(it.id);
-      if (display.length >= 3) break;
-    }
+  // Show the most recently added empreendimentos.
+  // Prefer `created_at` when available, otherwise fall back to `updated_at`.
+  function getEmpDate(emp: PublicEmpreendimento) {
+    // created_at might not be present in the TypeScript type (DB may have it).
+    // Use a runtime check and fallback to updated_at.
+    const raw = (emp as any).created_at ?? emp.updated_at;
+    const d = raw ? new Date(raw) : new Date(0);
+    return d.getTime();
   }
 
-  if (display.length < 3) {
-    for (const emp of empreendimentos) {
-      if (added.has(emp.id)) continue;
-      display.push(emp);
-      added.add(emp.id);
-      if (display.length >= 3) break;
-    }
-  }
+  const sortedByDate = [...empreendimentos].sort((a, b) => getEmpDate(b) - getEmpDate(a));
+
+  const display = sortedByDate.slice(0, 3);
 
   return (
     <section className="container py-12">
@@ -63,7 +44,7 @@ export default function MostSearched({ empreendimentos, slugMap }: Props) {
         <div className="flex items-center justify-between">
           <div>
             <Eyebrow>Curadoria San Remo</Eyebrow>
-            <SectionTitle>Empreendimentos mais buscados</SectionTitle>
+            <SectionTitle>Últimos empreendimentos</SectionTitle>
           </div>
         </div>
 
